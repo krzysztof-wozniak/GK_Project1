@@ -31,10 +31,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.addPolygonButton = new System.Windows.Forms.ToolStripButton();
+            this.midPointButton = new System.Windows.Forms.ToolStripButton();
             this.deleteVerticeButton = new System.Windows.Forms.ToolStripButton();
+            this.deletePolygonButton = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.addVerticeToEdgeButton = new System.Windows.Forms.ToolStripButton();
+            this.nPolygonsLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -44,8 +46,10 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addPolygonButton,
-            this.addVerticeToEdgeButton,
-            this.deleteVerticeButton});
+            this.midPointButton,
+            this.deleteVerticeButton,
+            this.deletePolygonButton,
+            this.nPolygonsLabel});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -64,6 +68,16 @@
             this.addPolygonButton.ToolTipText = "Draw a polygon";
             this.addPolygonButton.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
+            // midPointButton
+            // 
+            this.midPointButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.midPointButton.Image = ((System.Drawing.Image)(resources.GetObject("midPointButton.Image")));
+            this.midPointButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.midPointButton.Name = "midPointButton";
+            this.midPointButton.Size = new System.Drawing.Size(23, 22);
+            this.midPointButton.Text = "toolStripButton1";
+            this.midPointButton.Click += new System.EventHandler(this.midPointButton_Click);
+            // 
             // deleteVerticeButton
             // 
             this.deleteVerticeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -74,6 +88,16 @@
             this.deleteVerticeButton.Text = "toolStripButton2";
             this.deleteVerticeButton.ToolTipText = "Delete a point";
             this.deleteVerticeButton.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
+            // deletePolygonButton
+            // 
+            this.deletePolygonButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.deletePolygonButton.Image = ((System.Drawing.Image)(resources.GetObject("deletePolygonButton.Image")));
+            this.deletePolygonButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deletePolygonButton.Name = "deletePolygonButton";
+            this.deletePolygonButton.Size = new System.Drawing.Size(23, 22);
+            this.deletePolygonButton.Text = "toolStripButton1";
+            this.deletePolygonButton.Click += new System.EventHandler(this.deletePolygonButton_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -105,14 +129,11 @@
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             // 
-            // addVerticeToEdgeButton
+            // nPolygonsLabel
             // 
-            this.addVerticeToEdgeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.addVerticeToEdgeButton.Image = ((System.Drawing.Image)(resources.GetObject("addVerticeToEdgeButton.Image")));
-            this.addVerticeToEdgeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.addVerticeToEdgeButton.Name = "addVerticeToEdgeButton";
-            this.addVerticeToEdgeButton.Size = new System.Drawing.Size(23, 22);
-            this.addVerticeToEdgeButton.Text = "toolStripButton1";
+            this.nPolygonsLabel.Name = "nPolygonsLabel";
+            this.nPolygonsLabel.Size = new System.Drawing.Size(86, 22);
+            this.nPolygonsLabel.Text = "toolStripLabel1";
             // 
             // Form1
             // 
@@ -139,7 +160,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.PictureBox pictureBox;
         private System.Windows.Forms.ToolStripButton deleteVerticeButton;
-        private System.Windows.Forms.ToolStripButton addVerticeToEdgeButton;
+        private System.Windows.Forms.ToolStripButton midPointButton;
+        private System.Windows.Forms.ToolStripButton deletePolygonButton;
+        private System.Windows.Forms.ToolStripLabel nPolygonsLabel;
     }
 }
 
