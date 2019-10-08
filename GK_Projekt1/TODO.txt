@@ -1,0 +1,12 @@
+﻿Przesuwanie wierzcholkow i krawedzi
+Poprawic przesuwanie?
+Usuwanie, edycja
+
+wszystkie relacje
+
+
+usuwanie zle -> get next/prev vertice?
+
+po usunieciu przesuwanie nie dziala
+
+
