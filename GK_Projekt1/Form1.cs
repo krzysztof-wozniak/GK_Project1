@@ -194,7 +194,7 @@ namespace GK_Projekt1
         
         
 
-        private (int, Point)? FindNearestObject(Point point)
+        private (int, Edge)? FindNearestEdge(Point point)
         {
             return null;
         }

@@ -17,6 +17,14 @@ namespace GK_Projekt1
         public Vertice Vertice1 { get => vertice1; set => vertice1 = value; }
         public Vertice Vertice2 { get => vertice2; set => vertice2 = value; }
 
+        public Edge(Vertice v1, Vertice v2, Polygon polygon)
+        {
+            this.vertice1 = v1;
+            this.vertice2 = v2;
+            this.polygon = polygon;
+        }
+
+
         public static bool operator==(Edge e1, Edge e2)
         {
             if ((e1.vertice1 == e2.vertice1 && e1.vertice2 == e2.vertice2) || e1.vertice2 == e2.vertice1 && e1.vertice1 == e2.vertice2)
