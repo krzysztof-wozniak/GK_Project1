@@ -11,6 +11,7 @@ namespace GK_Projekt1
         private List<Vertice> vertices = new List<Vertice>();
         //private List<Edge> edges = new List<Edge>();
         private int index;
+        private bool fullPolygon = false;
 
         public int Index
         {
@@ -70,7 +71,7 @@ namespace GK_Projekt1
             }
 
             //var iterator = vertices.GetEnumerator();
-            //while(iterator.MoveNext())
+            //while (iterator.MoveNext())
             //{
             //    iterator.Current.Index--;
             //}
@@ -114,22 +115,30 @@ namespace GK_Projekt1
 
         public List<Edge> GetEdges()
         {
-            if (vertices.Count < 3)
-                return null;
-            var iterator = vertices.GetEnumerator();
             List<Edge> edges = new List<Edge>();
+            if (vertices.Count < 3)
+                return edges;
+            var iterator = vertices.GetEnumerator();
             iterator.MoveNext();
             Vertice v1 = iterator.Current;
             Vertice v2;
+
             while(iterator.MoveNext())
             {
                 v2 = iterator.Current;
                 edges.Add(new Edge(v1, v2, v1.Polygon));
+                v1 = v2;
             }
+            if(fullPolygon == true)
+                edges.Add(new Edge(vertices[0], vertices[vertices.Count - 1], v1.Polygon));
 
 
             return edges;
         }
 
+        public void FinishDrawing()
+        {
+            fullPolygon = true;
+        }
     }
 }

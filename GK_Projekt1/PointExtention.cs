@@ -35,5 +35,10 @@ namespace GK_Projekt1
             }
             return Math.Sqrt(Math.Pow(p.X - p3.X, 2) + Math.Pow(p.Y - p3.Y, 2));
         }
+
+        public static double DistanceToEdge(this Point p, Edge e)
+        {
+            return p.DistanceToEdge(e.Vertice1.Point, e.Vertice2.Point);
+        }
     }
 }

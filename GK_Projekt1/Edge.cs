@@ -25,27 +25,38 @@ namespace GK_Projekt1
         }
 
 
-        public static bool operator==(Edge e1, Edge e2)
+        //public static bool operator==(Edge e1, Edge e2)
+        //{
+        //    if (e1 == null || e2 == null)
+        //        return false;
+        //    if ((e1.vertice1 == e2.vertice1 && e1.vertice2 == e2.vertice2) || e1.vertice2 == e2.vertice1 && e1.vertice1 == e2.vertice2)
+        //        return true;
+        //    return false;
+        //}
+
+        //public static bool operator !=(Edge e1, Edge e2)
+        //{
+        //    return !(e1 == e2);
+        //}
+
+        public static bool CompareEdges(Edge e1, Edge e2)
         {
+            if (e1 == null || e2 == null)
+                return false;
             if ((e1.vertice1 == e2.vertice1 && e1.vertice2 == e2.vertice2) || e1.vertice2 == e2.vertice1 && e1.vertice1 == e2.vertice2)
                 return true;
             return false;
         }
 
-        public static bool operator !=(Edge e1, Edge e2)
-        {
-            return !(e1 == e2);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-                return false;
-            Edge e = (Edge)obj;
-            if ((vertice1 == e.vertice1 && vertice2 == e.vertice2) || vertice2 == e.vertice1 && vertice1 == e.vertice2)
-                return true;
-            return false;
-        }
+        //public override bool Equals(object obj)
+        //{
+        //    if (obj == null || GetType() != obj.GetType())
+        //        return false;
+        //    Edge e = (Edge)obj;
+        //    if ((vertice1 == e.vertice1 && vertice2 == e.vertice2) || vertice2 == e.vertice1 && vertice1 == e.vertice2)
+        //        return true;
+        //    return false;
+        //}
 
 
 
