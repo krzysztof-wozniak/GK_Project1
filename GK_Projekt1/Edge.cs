@@ -16,5 +16,30 @@ namespace GK_Projekt1
         public Polygon Polygon { get => polygon; set => polygon = value; }
         public Vertice Vertice1 { get => vertice1; set => vertice1 = value; }
         public Vertice Vertice2 { get => vertice2; set => vertice2 = value; }
+
+        public static bool operator==(Edge e1, Edge e2)
+        {
+            if ((e1.vertice1 == e2.vertice1 && e1.vertice2 == e2.vertice2) || e1.vertice2 == e2.vertice1 && e1.vertice1 == e2.vertice2)
+                return true;
+            return false;
+        }
+
+        public static bool operator !=(Edge e1, Edge e2)
+        {
+            return !(e1 == e2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+            Edge e = (Edge)obj;
+            if ((vertice1 == e.vertice1 && vertice2 == e.vertice2) || vertice2 == e.vertice1 && vertice1 == e.vertice2)
+                return true;
+            return false;
+        }
+
+
+
     }
 }
