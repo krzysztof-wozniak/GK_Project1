@@ -21,40 +21,34 @@ namespace GK_Projekt1
         private bool drawingPolygon = false;
         private bool deletingPoint = false;
         private bool deletingPolygon = false;
+        private bool movingPolygon = false;
+        private bool movingVertice = false;
+        private bool movingEdge = false;
+        private bool controlKeyDown = false;
         private bool myDrawFlag = false;
         private bool midPoint = false;
+        
 
-        private Color activeButtonColor = SystemColors.ActiveCaption;
-        private Color normalButtonColor = SystemColors.Control;
-
-
-        //private List<List<Point>> polygons = new List<List<Point>>();
         private List<Polygon> polygons = new List<Polygon>();
-
-
-        //private List<Point> currentPolygon;
         private Polygon currentPolygon;
-
+        private Vertice chosenVertice = null;
+        private Edge chosenEdge = null;
 
         private const int minDistanceVertice = 15;
         private const int minDistanceEdge = 10;
         private const int radius = 8;
-
-        private Vertice chosenVertice = null;
-        private Edge chosenEdge = null;
-
-        private static bool movingVertice = false;
         private static int penWidth = 2;
 
+        private Color activeButtonColor = SystemColors.ActiveCaption;
+        private Color normalButtonColor = SystemColors.Control;
         private Pen blackPen = new Pen(Color.Black, penWidth);
         private Pen backColorPen = null;
         private Pen chosenPen = new Pen(Color.Orange, penWidth);
-
-
-
         private SolidBrush backColorBrush = null;
         private SolidBrush chosenBrush = new SolidBrush(Color.Orange);
         private SolidBrush normalBrush = new SolidBrush(Color.Black);
+
+        private Point startingPoint;
 
         public Form1()
         {
@@ -121,13 +115,14 @@ namespace GK_Projekt1
                 return;
             }
 
-            if(deletingPolygon && chosenVertice != null || chosenEdge != null)
+            if(deletingPolygon && (chosenVertice != null || chosenEdge != null))
             {
                 int index = chosenVertice == null ? chosenEdge.Polygon.Index : chosenVertice.Polygon.Index;
                 DeletePolygon(index);
             }
 
         }
+
 
         private void DeletePoint(object sender, EventArgs e)
         {
@@ -164,6 +159,57 @@ namespace GK_Projekt1
             deleteVerticeButton.BackColor = normalButtonColor;
 
         }
+
+        private void DeletePolygon(int index)
+        {
+            if (index < 0 || index >= polygons.Count)
+                return;
+            for (int i = index + 1; i < polygons.Count; i++)
+            {
+                polygons[i].ChangeIndex(i - 1);
+            }
+            this.polygons.RemoveAt(index);
+            Cursor = Cursors.Arrow;
+            deletingPolygon = false;
+            if (chosenVertice != null)
+            {
+                RedrawPolygon(chosenVertice.Polygon, backColorBrush, backColorPen);
+                chosenVertice = null;
+            }
+            else
+            {
+                RedrawPolygon(chosenEdge.Polygon, backColorBrush, backColorPen);
+                chosenEdge = null;
+            }
+            RefreshPolygons();
+            deletePolygonButton.BackColor = normalButtonColor;
+            nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
+
+        }
+
+        private void DeletePolygon(Polygon polygon)
+        {
+            DeletePolygon(polygon.Index);
+        }
+
+        private void deletePolygonButton_Click(object sender, EventArgs e)
+        {
+            if (drawingPolygon)
+                return;
+            if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+            }
+            if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+            }
+            deletePolygonButton.BackColor = activeButtonColor;
+            deletingPolygon = true;
+        }
+
 
         private void DrawPolygon(object sender, EventArgs e)
         {
@@ -205,7 +251,6 @@ namespace GK_Projekt1
             b = v;
             MyDraw(blackPen, a.Point.X, a.Point.Y, b.Point.X, b.Point.Y);
         }
-
 
         private void MyDraw(Pen pen, int x1, int y1, int x2, int y2)
         {
@@ -263,7 +308,11 @@ namespace GK_Projekt1
         {
             Point mousePoint = new Point(e.X, e.Y);
             if (movingVertice)
-                MoveVertice(sender, e);
+                MoveVertice(mousePoint);
+            else if(movingEdge)
+            {
+                MoveEdge(mousePoint);
+            }
 
             (double distance2Vertice, Vertice vertice) = FindNearestVertice(mousePoint);
             (double distance2Edge, Edge edge) = FindNearestEdge(mousePoint);
@@ -298,15 +347,6 @@ namespace GK_Projekt1
                     return;
                 }
             }
-            // Sytuacje:
-            //nic -> v ok 
-            //nic -> e ok 
-            //v -> e ok 
-            //e -> v ok 
-            //e -> nic ok 
-            //v -> nic ok 
-            // e -> e ok
-            // v -> v ok
             if (edge != null)
             {
                 if (distance2Edge <= minDistanceEdge && distance2Edge < distance2Vertice)
@@ -366,24 +406,52 @@ namespace GK_Projekt1
 
         }
 
-        private void MoveVertice(object sender, MouseEventArgs e)//moze trzeba zmienic
+        private void MoveVertice(Point p)//moze trzeba zmienic
         {
-            Point mousePoint = new Point(e.X, e.Y);
-            int dx = e.X - chosenVertice.Point.X;
-            int dy = e.Y - chosenVertice.Point.Y;
             using (Graphics g = pictureBox.CreateGraphics())
             {
                 g.FillEllipse(backColorBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
                 Vertice prevVertice = chosenVertice.GetPreviousVertice();
                 Vertice nextVertice = chosenVertice.GetNextVertice();
-                MyDraw(blackPen, prevVertice.Point.X, prevVertice.Point.Y, mousePoint.X, mousePoint.Y); //--------------------------------------czy pomaga?
-                MyDraw(blackPen, nextVertice.Point.X, nextVertice.Point.Y, mousePoint.X, mousePoint.Y);
+                //MyDraw(blackPen, prevVertice.Point.X, prevVertice.Point.Y, p.X, p.Y); //--------------------------------------czy pomaga?
+                //MyDraw(blackPen, nextVertice.Point.X, nextVertice.Point.Y, p.X, p.Y);
                 MyDraw(backColorPen, chosenVertice.Point.X, chosenVertice.Point.Y, prevVertice.Point.X, prevVertice.Point.Y);
                 MyDraw(backColorPen, chosenVertice.Point.X, chosenVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y);
             }
-            chosenVertice.Point = mousePoint;
+            chosenVertice.Point = p;
             RefreshPolygons();
             
+        }
+
+        private void MoveEdge(Point p)
+        {
+            if (chosenEdge == null)
+                return;
+            int dx = p.X - startingPoint.X;
+            int dy = p.Y - startingPoint.Y;
+            Vertice v1 = chosenEdge.Vertice1;
+            Vertice v2 = chosenEdge.Vertice2;
+            using (Graphics g = pictureBox.CreateGraphics())
+            {
+                g.FillEllipse(backColorBrush, v1.Point.X - radius / 2, v1.Point.Y - radius / 2, radius, radius);
+                g.FillEllipse(backColorBrush, v2.Point.X - radius / 2, v2.Point.Y - radius / 2, radius, radius);
+                MyDraw(backColorPen, v1.Point.X, v1.Point.Y, v2.Point.X, v2.Point.Y);
+
+                Vertice prevVertice = v1.GetPreviousVertice();
+                Vertice nextVertice = v2.GetNextVertice();
+                if(prevVertice == v2)
+                {
+                    prevVertice = v1.GetNextVertice();
+                    nextVertice = v2.GetPreviousVertice();
+                }
+
+                MyDraw(backColorPen, v1.Point.X, v1.Point.Y, prevVertice.Point.X, prevVertice.Point.Y);
+                MyDraw(backColorPen, v2.Point.X, v2.Point.Y, nextVertice.Point.X, nextVertice.Point.Y);
+            }
+            v1.Point = new Point(v1.Point.X + dx, v1.Point.Y + dy);
+            v2.Point = new Point(v2.Point.X + dx, v2.Point.Y + dy);
+            startingPoint = p;
+            RefreshPolygons();
         }
         
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -391,6 +459,18 @@ namespace GK_Projekt1
             if (drawingPolygon)
                 return;
             Point mousePoint = new Point(e.X, e.Y);
+            if(controlKeyDown && (chosenVertice != null || chosenEdge != null))
+            {
+                movingPolygon = true;
+                startingPoint = mousePoint;
+                return;
+            }
+            if(chosenEdge != null)
+            {
+                movingEdge = true;
+                startingPoint = mousePoint;
+                return;
+            }
             if(chosenVertice != null)
                 movingVertice = true;
         }
@@ -398,6 +478,7 @@ namespace GK_Projekt1
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             movingVertice = false;
+            movingEdge = false;
         }
 
         private void RefreshPolygons()
@@ -461,37 +542,7 @@ namespace GK_Projekt1
             RefreshPolygons();
         }
 
-        private void DeletePolygon(int index)
-        {
-            if (index < 0 || index >= polygons.Count)
-                return;
-            for(int i = index + 1; i < polygons.Count; i++)
-            {
-                polygons[i].ChangeIndex(i - 1);
-            }
-            this.polygons.RemoveAt(index);
-            Cursor = Cursors.Arrow;
-            deletingPolygon = false;
-            if (chosenVertice != null)
-            {
-                RedrawPolygon(chosenVertice.Polygon, backColorBrush, backColorPen);
-                chosenVertice = null;
-            }
-            else
-            {
-                RedrawPolygon(chosenEdge.Polygon, backColorBrush, backColorPen);
-                chosenEdge = null;
-            }
-            RefreshPolygons();
-            deletePolygonButton.BackColor = normalButtonColor;
-            nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
-
-        }
-
-        private void DeletePolygon(Polygon polygon)
-        {
-            DeletePolygon(polygon.Index);
-        }
+        
 
         private void RedrawPolygon(Polygon polygon, Brush brush, Pen pen)
         {
@@ -506,23 +557,7 @@ namespace GK_Projekt1
             }
         }
 
-        private void deletePolygonButton_Click(object sender, EventArgs e)
-        {
-            if (drawingPolygon)
-                return;
-            if (deletingPoint)
-            {
-                deletingPoint = false;
-                deleteVerticeButton.BackColor = normalButtonColor;
-            }
-            if (midPoint)
-            {
-                midPoint = false;
-                midPointButton.BackColor = normalButtonColor;
-            }
-            deletePolygonButton.BackColor = activeButtonColor;
-            deletingPolygon = true;
-        }
+        
 
         private void midPointButton_Click(object sender, EventArgs e)
         {
@@ -552,5 +587,27 @@ namespace GK_Projekt1
         {
 
         }
+
+        private void pictureBox_Layout(object sender, EventArgs e)
+        {
+            RefreshPolygons();
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey)
+            {
+                controlKeyDown = true;
+            }
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey)
+            {
+                controlKeyDown = true;
+            }
+        }
+
     }
 }

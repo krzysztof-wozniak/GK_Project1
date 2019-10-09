@@ -34,9 +34,9 @@
             this.midPointButton = new System.Windows.Forms.ToolStripButton();
             this.deleteVerticeButton = new System.Windows.Forms.ToolStripButton();
             this.deletePolygonButton = new System.Windows.Forms.ToolStripButton();
+            this.nPolygonsLabel = new System.Windows.Forms.ToolStripLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.nPolygonsLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -99,6 +99,12 @@
             this.deletePolygonButton.Text = "toolStripButton1";
             this.deletePolygonButton.Click += new System.EventHandler(this.deletePolygonButton_Click);
             // 
+            // nPolygonsLabel
+            // 
+            this.nPolygonsLabel.Name = "nPolygonsLabel";
+            this.nPolygonsLabel.Size = new System.Drawing.Size(86, 22);
+            this.nPolygonsLabel.Text = "toolStripLabel1";
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
@@ -124,16 +130,10 @@
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Click += new System.EventHandler(this.pictureBox_Click);
-            this.pictureBox.Layout += new System.Windows.Forms.LayoutEventHandler(this.pictureBox_Layout);
             this.pictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
             this.pictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseMove);
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
-            // 
-            // nPolygonsLabel
-            // 
-            this.nPolygonsLabel.Name = "nPolygonsLabel";
-            this.nPolygonsLabel.Size = new System.Drawing.Size(86, 22);
-            this.nPolygonsLabel.Text = "toolStripLabel1";
+            this.pictureBox.Resize += new System.EventHandler(this.pictureBox_Layout);
             // 
             // Form1
             // 
@@ -144,6 +144,9 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
+            this.Layout += new System.Windows.Forms.LayoutEventHandler(this.pictureBox_Layout);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
