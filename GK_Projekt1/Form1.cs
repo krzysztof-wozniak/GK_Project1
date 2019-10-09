@@ -16,7 +16,8 @@ namespace GK_Projekt1
 
     public partial class Form1 : Form
     {
-        private static Bitmap image;
+        private Bitmap image;
+        private Image oldImage;
 
         private bool drawingPolygon = false;
         private bool deletingPoint = false;
@@ -254,8 +255,24 @@ namespace GK_Projekt1
 
         private void MyDraw(Pen pen, int x1, int y1, int x2, int y2)
         {
+            
             if (myDrawFlag)
             {
+                oldImage = pictureBox.Image;
+                image = new Bitmap(pictureBox.Image);
+                int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+                int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+                int err = (dx > dy ? dx : -dy) / 2, e2;
+                for (; ; )
+                {
+                    image.SetPixel(x1, y1, pen.Color);
+                    if (x1 == x2 && y1 == y2) break;
+                    e2 = err;
+                    if (e2 > -dx) { err -= dy; x1 += sx; }
+                    if (e2 < dy) { err += dx; y1 += sy; }
+                }
+                pictureBox.Image = image;
+                oldImage.Dispose();
             }
             else
             {
@@ -265,6 +282,37 @@ namespace GK_Projekt1
                 }
             }
         }
+
+        private void MyDrawImage(Pen pen, int x1, int y1, int x2, int y2, Bitmap image)
+        {
+            if (myDrawFlag)
+            {
+                oldImage = pictureBox.Image;
+                image = new Bitmap(pictureBox.Image);
+                int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+                int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+                int err = (dx > dy ? dx : - dy) / 2, e2;
+                for (; ; )
+                {
+                    image.SetPixel(x1, y1, pen.Color);
+                    if (x1 == x2 && y1 == y2) break;
+                    e2 = err;
+                    if (e2 > -dx) { err -= dy; x1 += sx; }
+                    if (e2 < dy) { err += dx; y1 += sy; }
+                }
+                pictureBox.Image = image;
+                oldImage.Dispose();
+            }
+            else
+            {
+                using (Graphics g = Graphics.FromImage(image))
+                {
+                    g.DrawLine(pen, x1, y1, x2, y2);
+                }
+            }
+        }
+
+
 
         private (double, Edge) FindNearestEdge(Point point)
         {
@@ -304,58 +352,8 @@ namespace GK_Projekt1
             return (distance, res);
         }
 
-        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            Point mousePoint = new Point(e.X, e.Y);
-            if (movingVertice)
-                MoveVertice(mousePoint);
-            else if(movingEdge)
-            {
-                MoveEdge(mousePoint);
-            }
 
-            (double distance2Vertice, Vertice vertice) = FindNearestVertice(mousePoint);
-            (double distance2Edge, Edge edge) = FindNearestEdge(mousePoint);
-            
-            if(chosenVertice != null)
-            {
-                if (distance2Vertice > minDistanceVertice)
-                {
-                    using (Graphics g = pictureBox.CreateGraphics())
-                    {
-                        g.FillEllipse(normalBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-                        chosenVertice = null;
-                        Cursor = Cursors.Arrow;
-                    }
-                }
-            }
-            if(chosenEdge != null)
-            {
-                if(distance2Edge > minDistanceEdge)
-                {
-                    MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
-                    chosenEdge = null;
-                    Cursor = Cursors.Arrow;
-                }
-            }
-            
-            if (vertice != null) //
-            {
-                if (distance2Vertice <= minDistanceVertice)// && distance2Vertice <= distance2Edge) //jest jakis vertice w zasiegu
-                {
-                    ColorChosenVertice(vertice);
-                    return;
-                }
-            }
-            if (edge != null)
-            {
-                if (distance2Edge <= minDistanceEdge && distance2Edge < distance2Vertice)
-                {
-                    ColorChosenEdge(edge);
-                }
-            }
-
-        }
+        
 
         private void ColorChosenEdge(Edge edge) // e -> e, v -> e, nic -> v
         {
@@ -408,18 +406,12 @@ namespace GK_Projekt1
 
         private void MoveVertice(Point p)//moze trzeba zmienic
         {
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                g.FillEllipse(backColorBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-                Vertice prevVertice = chosenVertice.GetPreviousVertice();
-                Vertice nextVertice = chosenVertice.GetNextVertice();
-                //MyDraw(blackPen, prevVertice.Point.X, prevVertice.Point.Y, p.X, p.Y); //--------------------------------------czy pomaga?
-                //MyDraw(blackPen, nextVertice.Point.X, nextVertice.Point.Y, p.X, p.Y);
-                MyDraw(backColorPen, chosenVertice.Point.X, chosenVertice.Point.Y, prevVertice.Point.X, prevVertice.Point.Y);
-                MyDraw(backColorPen, chosenVertice.Point.X, chosenVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y);
-            }
+            oldImage = pictureBox.Image;
+            image = new Bitmap(oldImage.Width, oldImage.Height);
             chosenVertice.Point = p;
-            RefreshPolygons();
+            DrawPolygons(image);
+            pictureBox.Image = image;
+            oldImage.Dispose();
             
         }
 
@@ -427,33 +419,46 @@ namespace GK_Projekt1
         {
             if (chosenEdge == null)
                 return;
+            oldImage = pictureBox.Image;
+            image = new Bitmap(oldImage.Width, oldImage.Height);
             int dx = p.X - startingPoint.X;
             int dy = p.Y - startingPoint.Y;
             Vertice v1 = chosenEdge.Vertice1;
             Vertice v2 = chosenEdge.Vertice2;
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                g.FillEllipse(backColorBrush, v1.Point.X - radius / 2, v1.Point.Y - radius / 2, radius, radius);
-                g.FillEllipse(backColorBrush, v2.Point.X - radius / 2, v2.Point.Y - radius / 2, radius, radius);
-                MyDraw(backColorPen, v1.Point.X, v1.Point.Y, v2.Point.X, v2.Point.Y);
-
-                Vertice prevVertice = v1.GetPreviousVertice();
-                Vertice nextVertice = v2.GetNextVertice();
-                if(prevVertice == v2)
-                {
-                    prevVertice = v1.GetNextVertice();
-                    nextVertice = v2.GetPreviousVertice();
-                }
-
-                MyDraw(backColorPen, v1.Point.X, v1.Point.Y, prevVertice.Point.X, prevVertice.Point.Y);
-                MyDraw(backColorPen, v2.Point.X, v2.Point.Y, nextVertice.Point.X, nextVertice.Point.Y);
-            }
             v1.Point = new Point(v1.Point.X + dx, v1.Point.Y + dy);
             v2.Point = new Point(v2.Point.X + dx, v2.Point.Y + dy);
             startingPoint = p;
-            RefreshPolygons();
+            DrawPolygons(image);
+            pictureBox.Image = image;
+            oldImage.Dispose();
         }
-        
+
+        private void MovePolygon(Point p)
+        {
+            oldImage = pictureBox.Image;
+            image = new Bitmap(oldImage.Width, oldImage.Height);
+            int dx = p.X - startingPoint.X;
+            int dy = p.Y - startingPoint.Y;
+            Polygon polygon;
+            if (chosenEdge != null)
+                polygon = chosenEdge.Polygon;
+            else if (chosenVertice != null)
+                polygon = chosenVertice.Polygon;
+            else return;
+
+            for(int i = 0; i < polygon.VerticeCount; i++)
+            {
+                Vertice v = polygon[i];
+                v.Point = new Point(v.Point.X + dx, v.Point.Y + dy);
+            }
+            startingPoint = p;
+            DrawPolygons(image);
+            pictureBox.Image = image;
+            oldImage.Dispose();
+        }
+
+
+
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (drawingPolygon)
@@ -465,13 +470,13 @@ namespace GK_Projekt1
                 startingPoint = mousePoint;
                 return;
             }
-            if(chosenEdge != null)
+            if(chosenEdge != null && controlKeyDown == false)
             {
                 movingEdge = true;
                 startingPoint = mousePoint;
                 return;
             }
-            if(chosenVertice != null)
+            if(chosenVertice != null && controlKeyDown == false)
                 movingVertice = true;
         }
         
@@ -479,7 +484,72 @@ namespace GK_Projekt1
         {
             movingVertice = false;
             movingEdge = false;
+            movingPolygon = false;
         }
+
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point mousePoint = new Point(e.X, e.Y);
+            if (movingVertice)
+            {
+                MoveVertice(mousePoint);
+                return;
+            }
+            else if (movingEdge)
+            {
+                MoveEdge(mousePoint);
+                return;
+            }
+            else if (movingPolygon)
+            {
+                MovePolygon(mousePoint);
+                return;
+            }
+
+            (double distance2Vertice, Vertice vertice) = FindNearestVertice(mousePoint);
+            (double distance2Edge, Edge edge) = FindNearestEdge(mousePoint);
+
+            if (chosenVertice != null)
+            {
+                if (distance2Vertice > minDistanceVertice)
+                {
+                    using (Graphics g = pictureBox.CreateGraphics())
+                    {
+                        g.FillEllipse(normalBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
+                        chosenVertice = null;
+                        Cursor = Cursors.Arrow;
+                    }
+                }
+            }
+            if (chosenEdge != null)
+            {
+                if (distance2Edge > minDistanceEdge)
+                {
+                    MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
+                    chosenEdge = null;
+                    Cursor = Cursors.Arrow;
+                }
+            }
+
+            if (vertice != null) //
+            {
+                if (distance2Vertice <= minDistanceVertice)// && distance2Vertice <= distance2Edge) //jest jakis vertice w zasiegu
+                {
+                    ColorChosenVertice(vertice);
+                    return;
+                }
+            }
+            if (edge != null)
+            {
+                if (distance2Edge <= minDistanceEdge && distance2Edge < distance2Vertice)
+                {
+                    ColorChosenEdge(edge);
+                }
+            }
+
+        }
+
+        
 
         private void RefreshPolygons()
         {
@@ -598,6 +668,7 @@ namespace GK_Projekt1
             if (e.KeyCode == Keys.ControlKey)
             {
                 controlKeyDown = true;
+                controlLabel.Text = "Control";
             }
         }
 
@@ -605,7 +676,38 @@ namespace GK_Projekt1
         {
             if (e.KeyCode == Keys.ControlKey)
             {
-                controlKeyDown = true;
+                controlKeyDown = false;
+                movingPolygon = false;
+                controlLabel.Text = "No control";
+            }
+        }
+
+        private void DrawPolygons(Bitmap image)
+        {
+            using (Graphics g = Graphics.FromImage(image))
+            {
+                for (int i = 0; i < polygons.Count; i++)
+                {
+                    for (int j = 0; j < polygons[i].VerticeCount; j++)
+                    {
+                        Vertice curVertice = polygons[i][j];
+                        Vertice nextVertice = curVertice.GetNextVertice();
+                        if (curVertice == chosenVertice)
+                            g.FillEllipse(chosenBrush, curVertice.Point.X - radius / 2, curVertice.Point.Y - radius / 2, radius, radius);
+                        else
+                            g.FillEllipse(normalBrush, curVertice.Point.X - radius / 2, curVertice.Point.Y - radius / 2, radius, radius);
+                        if (chosenEdge != null)
+                        {
+                            if ((chosenEdge.Vertice1 == curVertice && chosenEdge.Vertice2 == nextVertice) || (chosenEdge.Vertice1 == nextVertice && chosenEdge.Vertice2 == curVertice))
+                                MyDrawImage(chosenPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
+                            else
+                                MyDrawImage(blackPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
+                        }
+                        else
+                            MyDrawImage(blackPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
+
+                    }
+                }
             }
         }
 
