@@ -78,6 +78,7 @@
             this.midPointButton.Name = "midPointButton";
             this.midPointButton.Size = new System.Drawing.Size(23, 22);
             this.midPointButton.Text = "toolStripButton1";
+            this.midPointButton.ToolTipText = "Add a middle point";
             this.midPointButton.Click += new System.EventHandler(this.midPointButton_Click);
             // 
             // deleteVerticeButton
@@ -99,6 +100,7 @@
             this.deletePolygonButton.Name = "deletePolygonButton";
             this.deletePolygonButton.Size = new System.Drawing.Size(23, 22);
             this.deletePolygonButton.Text = "toolStripButton1";
+            this.deletePolygonButton.ToolTipText = "Delete a polygon";
             this.deletePolygonButton.Click += new System.EventHandler(this.deletePolygonButton_Click);
             // 
             // nPolygonsLabel

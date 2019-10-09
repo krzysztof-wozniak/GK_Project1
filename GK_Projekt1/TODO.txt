@@ -1,4 +1,5 @@
-﻿Przesuwanie krawedzi wielokata
+﻿
+
 MidPoint
 wszystkie relacje
 

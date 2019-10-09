@@ -193,23 +193,6 @@ namespace GK_Projekt1
             DeletePolygon(polygon.Index);
         }
 
-        private void deletePolygonButton_Click(object sender, EventArgs e)
-        {
-            if (drawingPolygon)
-                return;
-            if (deletingPoint)
-            {
-                deletingPoint = false;
-                deleteVerticeButton.BackColor = normalButtonColor;
-            }
-            if (midPoint)
-            {
-                midPoint = false;
-                midPointButton.BackColor = normalButtonColor;
-            }
-            deletePolygonButton.BackColor = activeButtonColor;
-            deletingPolygon = true;
-        }
 
 
         private void DrawPolygon(object sender, EventArgs e)
@@ -574,38 +557,6 @@ namespace GK_Projekt1
 
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            if (drawingPolygon)
-            {
-                return;
-            }
-            if (deletingPoint)
-            {
-                deletingPoint = false;
-                deleteVerticeButton.BackColor = normalButtonColor;
-                return;
-            }
-            if (deletingPolygon)
-            {
-                deletingPolygon = false;
-                deletePolygonButton.BackColor = normalButtonColor;
-            }
-            if (midPoint)
-            {
-                midPointButton.BackColor = normalButtonColor;
-                midPoint = false;
-            }
-            if (deletingPoint)
-            {
-                deletingPoint = false;
-                deleteVerticeButton.BackColor = normalButtonColor;
-                return;
-            }
-            deletingPoint = true;
-            deleteVerticeButton.BackColor = activeButtonColor;
-
-        }
 
         private void pictureBox_Layout(object sender, LayoutEventArgs e)
         {
@@ -631,27 +582,96 @@ namespace GK_Projekt1
 
         private void midPointButton_Click(object sender, EventArgs e)
         {
-            if (drawingPolygon)
-                return;
-            if(midPoint)
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if(midPoint)
             {
                 midPoint = false;
                 midPointButton.BackColor = normalButtonColor;
+                return;
             }
-            if (deletingPoint)
+            else if (deletingPoint)
             {
                 deletingPoint = false;
                 deleteVerticeButton.BackColor = normalButtonColor;
             }
-            if (deletingPolygon)
+            else if (deletingPolygon)
             {
                 deletingPolygon = false;
                 deletePolygonButton.BackColor = normalButtonColor;
             }
-            
+            else if (drawingPolygon)
+                return;
+
             midPointButton.BackColor = activeButtonColor;
             midPoint = true;
         }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+                return;
+            }
+            else if (deletingPolygon)
+            {
+                deletingPolygon = false;
+                deletePolygonButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPointButton.BackColor = normalButtonColor;
+                midPoint = false;
+            }
+            else if (drawingPolygon)
+                return;
+            deletingPoint = true;
+            deleteVerticeButton.BackColor = activeButtonColor;
+
+        }
+
+        private void deletePolygonButton_Click(object sender, EventArgs e)
+        {
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+            }
+            else if (deletingPolygon)
+            {
+                deletingPolygon = false;
+                deletePolygonButton.BackColor = normalButtonColor;
+                return;
+            }
+            else if (drawingPolygon)
+                return;
+            deletePolygonButton.BackColor = activeButtonColor;
+            deletingPolygon = true;
+        }
+
 
         private void checkButtons()
         {
