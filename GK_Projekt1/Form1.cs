@@ -102,32 +102,10 @@ namespace GK_Projekt1
             }
         }
 
-        private void pictureBox_Click(object sender, EventArgs e)
+
+
+        private void DeletePoint()
         {
-            if (drawingPolygon)
-            {
-                DrawPolygon(sender, e);
-                return;
-            }
-
-            if (deletingPoint)
-            {
-                DeletePoint(sender, e);
-                return;
-            }
-
-            if(deletingPolygon && (chosenVertice != null || chosenEdge != null))
-            {
-                int index = chosenVertice == null ? chosenEdge.Polygon.Index : chosenVertice.Polygon.Index;
-                DeletePolygon(index);
-            }
-
-        }
-
-
-        private void DeletePoint(object sender, EventArgs e)
-        {
-            MouseEventArgs mouse = (MouseEventArgs)e;
             if (chosenVertice == null)
                 return;
             if (chosenVertice.Polygon.VerticeCount == 3)
@@ -193,6 +171,21 @@ namespace GK_Projekt1
             DeletePolygon(polygon.Index);
         }
 
+        private void AddMidPoint()
+        {
+            if (chosenEdge == null)
+                return;
+            Point newPoint = new Point((chosenEdge.Vertice1.Point.X + chosenEdge.Vertice2.Point.X) / 2, (chosenEdge.Vertice1.Point.Y + chosenEdge.Vertice2.Point.Y) / 2);
+                chosenEdge.Polygon.AddMidPoint(chosenEdge.Vertice1, newPoint);
+            using (Graphics g = pictureBox.CreateGraphics())
+            {
+                g.FillEllipse(normalBrush, newPoint.X - radius / 2, newPoint.Y - radius / 2, radius, radius);
+            }
+            MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
+
+            chosenEdge = null;
+
+        }
 
 
         private void DrawPolygon(object sender, EventArgs e)
@@ -390,7 +383,7 @@ namespace GK_Projekt1
         private void MoveVertice(Point p)//moze trzeba zmienic
         {
             oldImage = pictureBox.Image;
-            image = new Bitmap(oldImage.Width, oldImage.Height);
+            image = new Bitmap(pictureBox.Width, pictureBox.Height);
             chosenVertice.Point = p;
             DrawPolygons(image);
             pictureBox.Image = image;
@@ -403,7 +396,7 @@ namespace GK_Projekt1
             if (chosenEdge == null)
                 return;
             oldImage = pictureBox.Image;
-            image = new Bitmap(oldImage.Width, oldImage.Height);
+            image = new Bitmap(pictureBox.Width, pictureBox.Height);
             int dx = p.X - startingPoint.X;
             int dy = p.Y - startingPoint.Y;
             Vertice v1 = chosenEdge.Vertice1;
@@ -532,7 +525,33 @@ namespace GK_Projekt1
 
         }
 
-        
+        private void pictureBox_Click(object sender, EventArgs e)
+        {
+            if (drawingPolygon)
+            {
+                DrawPolygon(sender, e);
+                return;
+            }
+
+            if (deletingPoint)
+            {
+                DeletePoint();
+                return;
+            }
+
+            if (deletingPolygon && (chosenVertice != null || chosenEdge != null))
+            {
+                int index = chosenVertice == null ? chosenEdge.Polygon.Index : chosenVertice.Polygon.Index;
+                DeletePolygon(index);
+            }
+
+            if(midPoint && chosenEdge != null)
+            {
+                AddMidPoint();
+            }
+
+        }
+
 
         private void RefreshPolygons()
         {
@@ -688,7 +707,6 @@ namespace GK_Projekt1
             if (e.KeyCode == Keys.ControlKey)
             {
                 controlKeyDown = true;
-                controlLabel.Text = "Control";
             }
         }
 
@@ -698,7 +716,6 @@ namespace GK_Projekt1
             {
                 controlKeyDown = false;
                 movingPolygon = false;
-                controlLabel.Text = "No control";
             }
         }
 

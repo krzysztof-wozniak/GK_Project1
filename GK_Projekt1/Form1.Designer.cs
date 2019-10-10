@@ -37,7 +37,6 @@
             this.nPolygonsLabel = new System.Windows.Forms.ToolStripLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.controlLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -50,8 +49,7 @@
             this.midPointButton,
             this.deleteVerticeButton,
             this.deletePolygonButton,
-            this.nPolygonsLabel,
-            this.controlLabel});
+            this.nPolygonsLabel});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -139,12 +137,6 @@
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             this.pictureBox.Resize += new System.EventHandler(this.pictureBox_Layout);
             // 
-            // controlLabel
-            // 
-            this.controlLabel.Name = "controlLabel";
-            this.controlLabel.Size = new System.Drawing.Size(64, 22);
-            this.controlLabel.Text = "No control";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -153,7 +145,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.toolStrip1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Polygons";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Layout += new System.Windows.Forms.LayoutEventHandler(this.pictureBox_Layout);
@@ -176,7 +168,6 @@
         private System.Windows.Forms.ToolStripButton midPointButton;
         private System.Windows.Forms.ToolStripButton deletePolygonButton;
         private System.Windows.Forms.ToolStripLabel nPolygonsLabel;
-        private System.Windows.Forms.ToolStripLabel controlLabel;
     }
 }
 

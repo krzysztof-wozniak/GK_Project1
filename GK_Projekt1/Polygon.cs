@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,12 +70,7 @@ namespace GK_Projekt1
             {
                 v.Polygon.vertices[i].Index--;
             }
-
-            //var iterator = vertices.GetEnumerator();
-            //while (iterator.MoveNext())
-            //{
-            //    iterator.Current.Index--;
-            //}
+            
             v.Polygon.vertices.RemoveAt(v.Index);
         }
 
@@ -85,12 +81,6 @@ namespace GK_Projekt1
         public void AddVertice(Vertice v)
         {
             vertices.Add(v);
-            //if (vertices.Count == 1)
-            //    return;
-            //else
-            //{
-            //    Vertice v1 = vertices[]
-            //}
         }
 
         public Vertice GetFirstVertice()
@@ -130,7 +120,7 @@ namespace GK_Projekt1
                 v1 = v2;
             }
             if(fullPolygon == true)
-                edges.Add(new Edge(vertices[0], vertices[vertices.Count - 1], v1.Polygon));
+                edges.Add(new Edge(vertices[vertices.Count - 1], vertices[0], v1.Polygon));
 
 
             return edges;
@@ -139,6 +129,18 @@ namespace GK_Projekt1
         public void FinishDrawing()
         {
             fullPolygon = true;
+        }
+
+        public void AddMidPoint(Vertice PreviousVertice, Point Point)
+        {
+            Polygon polygon = PreviousVertice.Polygon;
+            Vertice newVertice = new Vertice(Point, polygon, PreviousVertice.Index + 1);
+            
+            for (int i = PreviousVertice.Index + 1; i < polygon.VerticeCount; i++)
+            {
+                polygon.vertices[i].Index++;
+            }
+            vertices.Insert(PreviousVertice.Index + 1, newVertice);
         }
     }
 }
