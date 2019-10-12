@@ -60,7 +60,19 @@ namespace GK_Projekt1
             return polygon[index - 1];
         }
 
-        
+        public void MoveVertice(int dx, int dy)
+        {
+            this.point.Offset(dx, dy);
+           
+        }
+
+        public bool InRelation
+        {
+            get
+            {
+                return this.polygon.IsVerticeInRelation(this);
+            }
+        }
         
     }
 }

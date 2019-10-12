@@ -37,6 +37,9 @@
             this.nPolygonsLabel = new System.Windows.Forms.ToolStripLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.addEqualRButton = new System.Windows.Forms.ToolStripButton();
+            this.addPerpendicularRButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -49,7 +52,10 @@
             this.midPointButton,
             this.deleteVerticeButton,
             this.deletePolygonButton,
-            this.nPolygonsLabel});
+            this.nPolygonsLabel,
+            this.toolStripSeparator1,
+            this.addEqualRButton,
+            this.addPerpendicularRButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -137,6 +143,32 @@
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             this.pictureBox.Resize += new System.EventHandler(this.pictureBox_Layout);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // addEqualRButton
+            // 
+            this.addEqualRButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addEqualRButton.Image = ((System.Drawing.Image)(resources.GetObject("addEqualRButton.Image")));
+            this.addEqualRButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addEqualRButton.Name = "addEqualRButton";
+            this.addEqualRButton.Size = new System.Drawing.Size(23, 22);
+            this.addEqualRButton.Text = "toolStripButton1";
+            this.addEqualRButton.ToolTipText = "Add an equality relation";
+            this.addEqualRButton.Click += new System.EventHandler(this.addEqualRButton_Click);
+            // 
+            // addPerpendicularRButton
+            // 
+            this.addPerpendicularRButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.addPerpendicularRButton.Image = ((System.Drawing.Image)(resources.GetObject("addPerpendicularRButton.Image")));
+            this.addPerpendicularRButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.addPerpendicularRButton.Name = "addPerpendicularRButton";
+            this.addPerpendicularRButton.Size = new System.Drawing.Size(23, 22);
+            this.addPerpendicularRButton.Text = "toolStripButton1";
+            this.addPerpendicularRButton.ToolTipText = "Add a perpendicular relation";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,6 +200,9 @@
         private System.Windows.Forms.ToolStripButton midPointButton;
         private System.Windows.Forms.ToolStripButton deletePolygonButton;
         private System.Windows.Forms.ToolStripLabel nPolygonsLabel;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton addEqualRButton;
+        private System.Windows.Forms.ToolStripButton addPerpendicularRButton;
     }
 }
 

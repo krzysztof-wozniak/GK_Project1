@@ -1,9 +1,48 @@
 ﻿
-
-MidPoint
 wszystkie relacje
 
 
 
+Algorytm relacji rownosci:
+	Przy nakladaniu relacji:
+	{
+		wybierz dwie krawedzie, dalej zalozenie sa dobrze wybranie: nie maja relacji, sa rozne
+		druga krawedz wyrownaj tak zeby miala dlugosc pierwszej krawedzi - algorytm A
+	}
+	Wybierz jeden wierzcholke z drugiej krawedzi
+	Idz "na zewnatrz" krawedzi
+	V1 = Edge.Vertice1;
+	V2 = Edge.Vertice2
+	idz w strone Vertice1 -> Vertice2
+	while nie trafi na wierzcholek ktory nie jest w relacji 
+		jesli wierzcholek nalezi do pierwszej krawedzi
+		{
+			V1 = Edge.Vertice2
+			V2 = Edge.Vertice1
+			sprobuj w druga strone
+			kolecja.empty()
+		}
+		dodaj wierzcholek do kolekcji
+
+	jesli znowu sie nie udalo
+		koniec, nie da sie nalozyc relacji
+
+		dx = V1.X - V2.X
+		dy = V1.Y - V2.Y
+		d = druga krawedz.Length
+		dx = dx * d / Length;
+		dy = dy * d / Length
+
+		dx = V2.X - (V1.X + dx)
+		dy = V2.Y - (V1.Y + dy);
+
+		foreach(v in kolekcja)
+			v.MoveVertice(dx, dy);
+
+		Point p = new Point(V1.X + dx, V1.Y + dy);
 
 
+Algorytm A:
+{
+	
+}
