@@ -28,7 +28,7 @@ namespace GK_Projekt1
         private bool movingVertice = false;
         private bool movingEdge = false;
         private bool controlKeyDown = false;
-        private bool myDrawFlag = true;
+        private bool myDrawFlag = false;
         private bool midPoint = false;
         private bool equalRelation = false;
         private bool perpenRelation = false;
@@ -244,27 +244,20 @@ namespace GK_Projekt1
             {
                 //usun caly
                 DeletePolygon(chosenVertice.Polygon);
-                
+                return;
             }
             else
             {
-                using (Graphics g = pictureBox.CreateGraphics())
-                {
-                    Vertice prevVertice = chosenVertice.GetPreviousVertice();
-                    Vertice nextVertice = chosenVertice.GetNextVertice();
-
-                    g.FillEllipse(backColorBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-
-                    MyDraw(backColorPen, prevVertice.Point.X, prevVertice.Point.Y,
-                        chosenVertice.Point.X, chosenVertice.Point.Y);
-                    MyDraw(backColorPen, nextVertice.Point.X, nextVertice.Point.Y, chosenVertice.Point.X, chosenVertice.Point.Y);
-
-                    chosenVertice.Polygon.DeleteVertice(chosenVertice);
-                    chosenVertice = null;
-                    
-                }
+                chosenVertice.Polygon.DeleteVertice(chosenVertice);
+                chosenVertice = null;
             }
-            RefreshPolygons();
+            //oldImage = pictureBox.Image;
+            //image = new Bitmap(pictureBox.Width, pictureBox.Height);
+            //DrawPolygons(image);
+            //pictureBox.Image = image;
+            //oldImage.Dispose();
+            UpdatePictureBox();
+            //RefreshPolygons();
             Cursor = Cursors.Arrow;
             deletingPoint = false;
             deleteVerticeButton.BackColor = normalButtonColor;
@@ -299,18 +292,16 @@ namespace GK_Projekt1
         {
             if (chosenEdge == null)
                 return;
+            oldImage = pictureBox.Image;
+            image = new Bitmap(pictureBox.Width, pictureBox.Height);
             Point newPoint = new Point((chosenEdge.Vertice1.Point.X + chosenEdge.Vertice2.Point.X) / 2, (chosenEdge.Vertice1.Point.Y + chosenEdge.Vertice2.Point.Y) / 2);
-                chosenEdge.Polygon.AddMidPoint(chosenEdge.Vertice1, newPoint);
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                g.FillEllipse(normalBrush, newPoint.X - radius / 2, newPoint.Y - radius / 2, radius, radius);
-            }
-            MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
-
+            chosenEdge.Polygon.AddMidPoint(chosenEdge.Vertice1, newPoint);
             chosenEdge = null;
             midPoint = false;
             midPointButton.BackColor = normalButtonColor;
-
+            DrawPolygons(image);
+            pictureBox.Image = image;
+            oldImage.Dispose();
         }
 
         private void DrawPolygon(object sender, EventArgs e)
@@ -343,15 +334,16 @@ namespace GK_Projekt1
             Vertice v = new Vertice(new Point(mouseEventArgs.X, mouseEventArgs.Y), currentPolygon, currentPolygon.VerticeCount);
             currentPolygon.AddVertice(v);
 
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                g.FillEllipse(normalBrush, mouseEventArgs.X - radius / 2, mouseEventArgs.Y - radius / 2, radius, radius);
-            }
+            //using (Graphics g = pictureBox.CreateGraphics())
+            //{
+            //    g.FillEllipse(normalBrush, mouseEventArgs.X - radius / 2, mouseEventArgs.Y - radius / 2, radius, radius);
+            //}
             if (currentPolygon.VerticeCount < 2)
                 return;
-            a = v.GetPreviousVertice();
-            b = v;
-            MyDraw(blackPen, a.Point.X, a.Point.Y, b.Point.X, b.Point.Y);
+            //a = v.GetPreviousVertice();
+            //b = v;
+            //MyDraw(blackPen, a.Point.X, a.Point.Y, b.Point.X, b.Point.Y);
+            UpdatePictureBox();
         }
 
         private void AddEqualityRelation()
@@ -448,20 +440,23 @@ namespace GK_Projekt1
             
             if (myDrawFlag)
             {
-                Bitmap image = (Bitmap)pictureBox.Image;
+                //Bitmap image = Bitmap
                 //image = new Bitmap(pictureBox.Image);
                 int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
                 int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
                 int err = (dx > dy ? dx : -dy) / 2, e2;
                 for (; ; )
                 {
-                    image.SetPixel(x1, y1, pen.Color);
+                    if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
+                        ((Bitmap)pictureBox.Image).SetPixel(x1, y1, pen.Color);
                     if (x1 == x2 && y1 == y2) break;
                     e2 = err;
                     if (e2 > -dx) { err -= dy; x1 += sx; }
                     if (e2 < dy) { err += dx; y1 += sy; }
                 }
-                pictureBox.Image = image;
+                pictureBox.Refresh();
+
+                //pictureBox.Image = image;
                 //oldImage.Dispose();
             }
             else
@@ -477,21 +472,18 @@ namespace GK_Projekt1
         {
             if (myDrawFlag)
             {
-                oldImage = pictureBox.Image;
-                image = new Bitmap(pictureBox.Image);
                 int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
                 int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
                 int err = (dx > dy ? dx : - dy) / 2, e2;
-                for (; ; )
+                for (;;)
                 {
-                    image.SetPixel(x1, y1, pen.Color);
+                    if(x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
+                        image.SetPixel(x1, y1, pen.Color);
                     if (x1 == x2 && y1 == y2) break;
                     e2 = err;
                     if (e2 > -dx) { err -= dy; x1 += sx; }
                     if (e2 < dy) { err += dx; y1 += sy; }
                 }
-                pictureBox.Image = image;
-                oldImage.Dispose();
             }
             else
             {
@@ -541,60 +533,6 @@ namespace GK_Projekt1
             }
             return (distance, res);
         }
-
-
-        
-
-        private void ColorChosenEdge(Edge edge) // e -> e, v -> e, nic -> v
-        {
-            Cursor = Cursors.Hand;
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                if (chosenVertice != null) 
-                {
-                    g.FillEllipse(normalBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-                    chosenVertice = null;
-                }
-                if (chosenEdge != null && chosenEdge != edge)
-                {
-                    MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
-                }
-                if (chosenEdge != null && chosenEdge == edge)
-                    return;
-                chosenEdge = edge;
-                MyDraw(chosenPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
-                g.FillEllipse(normalBrush, edge.Vertice1.Point.X - radius / 2, edge.Vertice1.Point.Y - radius / 2, radius, radius);
-                g.FillEllipse(normalBrush, edge.Vertice2.Point.X - radius / 2, edge.Vertice2.Point.Y - radius / 2, radius, radius);
-            }
-
-        }
-
-        private void ColorChosenVertice(Vertice vertice) // e -> v, v -> v, nic -> v
-        {
-            Cursor = Cursors.Hand;
-            if(chosenEdge != null) //jesli byla chosenEdge to na czarno
-            {
-                MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
-                chosenEdge = null;
-            }
-            using (Graphics g = pictureBox.CreateGraphics())
-            {
-                if (chosenVertice != null && chosenVertice != vertice) //jesli byl inny wierzcholek to na czarno
-                {
-                    g.FillEllipse(normalBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-
-                }
-                if (chosenVertice == vertice) //czyli juz byl ten pokolorowany
-                {
-                    return;
-                }
-                chosenVertice = vertice;
-                g.FillEllipse(chosenBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-            }
-
-        }
-
-        
 
 
 
@@ -652,19 +590,14 @@ namespace GK_Projekt1
             {
                 if (distance2Vertice > minDistanceVertice)
                 {
-                    using (Graphics g = pictureBox.CreateGraphics())
-                    {
-                        g.FillEllipse(normalBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
-                        chosenVertice = null;
-                        Cursor = Cursors.Arrow;
-                    }
+                    chosenVertice = null;
+                    Cursor = Cursors.Arrow;
                 }
             }
             if (chosenEdge != null)
             {
                 if (distance2Edge > minDistanceEdge)
                 {
-                    MyDraw(blackPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y);
                     chosenEdge = null;
                     Cursor = Cursors.Arrow;
                 }
@@ -674,7 +607,10 @@ namespace GK_Projekt1
             {
                 if (distance2Vertice <= minDistanceVertice)// && distance2Vertice <= distance2Edge) //jest jakis vertice w zasiegu
                 {
-                    ColorChosenVertice(vertice);
+                    chosenVertice = vertice;
+                    chosenEdge = null;
+                    Cursor = Cursors.Hand;
+                    UpdatePictureBox();
                     return;
                 }
             }
@@ -682,9 +618,12 @@ namespace GK_Projekt1
             {
                 if (distance2Edge <= minDistanceEdge && distance2Edge < distance2Vertice)
                 {
-                    ColorChosenEdge(edge);
+                    chosenVertice = null;
+                    chosenEdge = edge;
+                    Cursor = Cursors.Hand;
                 }
             }
+            UpdatePictureBox();
 
         }
 
@@ -914,16 +853,8 @@ namespace GK_Projekt1
                             g.FillEllipse(chosenBrush, curVertice.Point.X - radius / 2, curVertice.Point.Y - radius / 2, radius, radius);
                         else
                             g.FillEllipse(normalBrush, curVertice.Point.X - radius / 2, curVertice.Point.Y - radius / 2, radius, radius);
-                        if (chosenEdge != null)
-                        {
-                            if ((chosenEdge.Vertice1 == curVertice && chosenEdge.Vertice2 == nextVertice) || (chosenEdge.Vertice1 == nextVertice && chosenEdge.Vertice2 == curVertice))
-                                MyDrawImage(chosenPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
-                            else
-                                MyDrawImage(blackPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
-                        }
-                        else
+                        if(polygons[i].FullPolygon || nextVertice.Index != 0)
                             MyDrawImage(blackPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
-
                         if(e.Polygon.IsEdgeInRelation(e))
                         {
 
@@ -931,6 +862,14 @@ namespace GK_Projekt1
                         }
 
                     }
+                }
+                if(chosenEdge != null)
+                {
+                    MyDrawImage(chosenPen, chosenEdge.Vertice1.Point.X, chosenEdge.Vertice1.Point.Y, chosenEdge.Vertice2.Point.X, chosenEdge.Vertice2.Point.Y, image);
+                }
+                else if (chosenVertice != null)
+                {
+                    g.FillEllipse(chosenBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
                 }
             }
         }

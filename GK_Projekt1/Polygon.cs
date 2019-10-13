@@ -23,7 +23,7 @@ namespace GK_Projekt1
             this.index = index;
         }
 
-
+        public bool FullPolygon { get => fullPolygon; }
 
         public int Index
         {
