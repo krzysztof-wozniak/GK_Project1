@@ -12,6 +12,8 @@ namespace GK_Projekt1
         private Point point;
         private int index; //index of the vertice in the polygon
         private Polygon polygon;
+        private Relation relationNextVertice;
+        private Relation relationPrevVertice;
 
         public Polygon Polygon { get => polygon; set => polygon = value; }
 
@@ -22,17 +24,7 @@ namespace GK_Projekt1
             this.index = index;
         }
 
-        public int Index
-        {
-            get
-            {
-                return index;
-            }
-            set
-            {
-                index = value;
-            }
-        }
+        public int Index { get => index; set => index = value; }
 
         public Point Point { get => point; set => point = value; }
 
@@ -73,6 +65,18 @@ namespace GK_Projekt1
                 return this.polygon.IsVerticeInRelation(this);
             }
         }
-        
+
+        public Relation RelationNextVertice
+        {
+            get => relationNextVertice;
+            set => relationNextVertice = value;
+        }
+
+        public Relation RelationPrevVertice
+        {
+            get => relationPrevVertice;
+            set => relationPrevVertice = value;
+        }
+
     }
 }

@@ -41,5 +41,6 @@ namespace GK_Projekt1
             
         }
 
+        public abstract bool IsEquality();
     }
 }

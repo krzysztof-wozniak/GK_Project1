@@ -20,6 +20,14 @@ namespace GK_Projekt1
             this.length = Math.Sqrt(Math.Pow(e1.Vertice1.Point.X - e1.Vertice2.Point.X, 2) + Math.Pow(e1.Vertice1.Point.Y - e1.Vertice2.Point.Y, 2));
         }
 
+        public override bool IsEquality()
+        {
+            return true;
+        }
 
+        public double Length
+        {
+            get => length;
+        }
     }
 }

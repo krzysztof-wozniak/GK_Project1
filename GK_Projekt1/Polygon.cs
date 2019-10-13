@@ -15,7 +15,7 @@ namespace GK_Projekt1
         private bool fullPolygon = false;
 
         public List<Relation> relations = new List<Relation>();
-
+        public List<EqualityRelation> equalityRelations = new List<EqualityRelation>();
 
 
         public Polygon(int index)
@@ -181,7 +181,12 @@ namespace GK_Projekt1
 
         public void AddEqualityRelation(Edge e1, Edge e2)
         {
-            relations.Add(new EqualityRelation(e1, e2));
+            EqualityRelation r = new EqualityRelation(e1, e2);
+            relations.Add(r);
+            e1.Vertice1.RelationNextVertice = r;
+            e1.Vertice2.RelationPrevVertice = r;
+            e2.Vertice1.RelationNextVertice = r;
+            e2.Vertice2.RelationPrevVertice = r;
         }
 
         public void DeleteLastRelation()
@@ -220,8 +225,6 @@ namespace GK_Projekt1
                     Vertice prevV = iterator.GetPreviousVertice();
                     if (!iterator.Polygon.IsEdgeInRelation(prevV, iterator))
                     {
-                        //if (prevV == vEnd)
-                        //    return null;
                         return list;
                     }
                     iterator = prevV;
@@ -231,6 +234,37 @@ namespace GK_Projekt1
             return null;
         }
 
-
+        public List<Vertice> GetVerticesToMove(Vertice v, Direction direction)
+        {
+            Vertice iterator = v;
+            List<Vertice> list = new List<Vertice>();
+            Vertice nextV = iterator.GetNextVertice();
+            Vertice prevV = iterator.GetPreviousVertice();
+            if (direction == Direction.Forward)
+            {
+                do
+                {
+                    list.Add(iterator);
+                    nextV = iterator.GetNextVertice();
+                    if (!iterator.Polygon.IsEdgeInRelation(iterator, nextV))
+                    {
+                        return list;
+                    }
+                    iterator = nextV;
+                } while (iterator != v);
+                return list;
+            }
+            do
+            {
+                list.Add(iterator);
+                prevV = iterator.GetPreviousVertice();
+                if (!iterator.Polygon.IsEdgeInRelation(prevV, iterator))
+                {
+                    return list;
+                }
+                iterator = prevV;
+            } while (iterator != v);
+            return list;
+        }
     }
 }
