@@ -38,9 +38,9 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addEqualRButton = new System.Windows.Forms.ToolStripButton();
             this.addPerpendicularRButton = new System.Windows.Forms.ToolStripButton();
+            this.debugLabel = new System.Windows.Forms.ToolStripLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.debugLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -141,6 +141,12 @@
             this.addPerpendicularRButton.Size = new System.Drawing.Size(23, 22);
             this.addPerpendicularRButton.Text = "toolStripButton1";
             this.addPerpendicularRButton.ToolTipText = "Add a perpendicular relation";
+            this.addPerpendicularRButton.Click += new System.EventHandler(this.addPerpendicularRButton_Click);
+            // 
+            // debugLabel
+            // 
+            this.debugLabel.Name = "debugLabel";
+            this.debugLabel.Size = new System.Drawing.Size(0, 22);
             // 
             // tableLayoutPanel1
             // 
@@ -172,11 +178,6 @@
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             this.pictureBox.Resize += new System.EventHandler(this.pictureBox_Layout);
             // 
-            // debugLabel
-            // 
-            this.debugLabel.Name = "debugLabel";
-            this.debugLabel.Size = new System.Drawing.Size(0, 22);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,7 +189,6 @@
             this.Text = "Polygons";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
-            this.Layout += new System.Windows.Forms.LayoutEventHandler(this.pictureBox_Layout);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);

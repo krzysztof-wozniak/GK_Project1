@@ -8,23 +8,27 @@ namespace GK_Projekt1
 {
     public abstract class Relation
     {
-        protected Vertice Edge1Vertice1;
-        protected Vertice Edge1Vertice2;
-        protected Vertice Edge2Vertice1;
-        protected Vertice Edge2Vertice2;
+        protected Vertice edge1Vertice1;
+        protected Vertice edge1Vertice2;
+        protected Vertice edge2Vertice1;
+        protected Vertice edge2Vertice2;
+        protected int index;
 
+        public int Index { get => index; }
        
-        public Relation(Vertice v1, Vertice v2, Vertice v3, Vertice v4)
+        public Relation(Vertice v1, Vertice v2, Vertice v3, Vertice v4, int index)
         {
-            Edge1Vertice1 = v1;
-            Edge1Vertice2 = v2;
-            Edge2Vertice1 = v3;
-            Edge2Vertice2 = v4;
+            edge1Vertice1 = v1;
+            edge1Vertice2 = v2;
+            edge2Vertice1 = v3;
+            edge2Vertice2 = v4;
+            this.index = index;
         }
 
+        public int ChangeIndex(int i) => this.index = i;
         public bool IsVerticeInRelation(Vertice v)
         {
-            if (Edge1Vertice1 == v || Edge1Vertice2 == v || Edge2Vertice1 == v || Edge2Vertice2 == v)
+            if (edge1Vertice1 == v || edge1Vertice2 == v || edge2Vertice1 == v || edge2Vertice2 == v)
                 return true;
             return false;
         }
@@ -33,9 +37,9 @@ namespace GK_Projekt1
         {
             Vertice v1 = e.Vertice1;
             Vertice v2 = e.Vertice2;
-            if (Edge1Vertice1 == v1 && Edge1Vertice2 == v2)
+            if (edge1Vertice1 == v1 && edge1Vertice2 == v2)
                 return true;
-            if (Edge2Vertice1 == v1 && Edge2Vertice2 == v2)
+            if (edge2Vertice1 == v1 && edge2Vertice2 == v2)
                 return true;
             return false;
             

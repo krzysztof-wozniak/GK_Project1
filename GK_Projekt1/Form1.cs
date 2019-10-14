@@ -33,6 +33,8 @@ namespace GK_Projekt1
         private bool equalRelation = false;
         private bool perpenRelation = false;
 
+        private Font font = new Font("Calibri", 15);
+        private Brush fontBrush = new SolidBrush(Color.Green);
 
         private Bitmap EqualIcon;
         
@@ -122,21 +124,66 @@ namespace GK_Projekt1
 
         private void MoveVertice(Point p)//nie dziala dla trojkata z relacja, trzeba zrobic inna GetVerticesToMove
         {
-            oldImage = pictureBox.Image;
-            image = new Bitmap(pictureBox.Width, pictureBox.Height);
+            //oldImage = pictureBox.Image;
+            //image = new Bitmap(pictureBox.Width, pictureBox.Height);
             int dx = p.X - chosenVertice.Point.X;
             int dy = p.Y - chosenVertice.Point.Y;
             Vertice nextVertice = chosenVertice.GetNextVertice();
             Vertice prevVertice = chosenVertice.GetPreviousVertice();
             bool nextEdgeRelation = chosenVertice.Polygon.IsEdgeInRelation(chosenVertice, nextVertice);
             bool prevEdgeRelation = chosenVertice.Polygon.IsEdgeInRelation(prevVertice, chosenVertice);
+            bool backward = false;
             if (nextEdgeRelation && prevEdgeRelation)
             {
-                var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
-                if (chosenVertice.RelationPrevVertice.IsEquality())
+                
+                if (chosenVertice.RelationNextVertice == chosenVertice.RelationPrevVertice && chosenVertice.RelationNextVertice.IsEquality())
                 {
-                    EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationPrevVertice;
-                    MoveAroundCircle(prevVertice, equalityRelation.Length, p, list);
+                    var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
+                    var list2 = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
+                    if (list2.Count < list.Count)
+                    {
+                        backward = true;
+                        list = list2;
+
+                    }
+                    if (backward)
+                    {
+                        Vertice temp;
+                        temp = nextVertice;
+                        nextVertice = prevVertice;
+                        prevVertice = temp;
+                    }
+                    double chosenNextdx = nextVertice.Point.X - chosenVertice.Point.X;
+                    double chosenNextdy = nextVertice.Point.Y - chosenVertice.Point.Y;
+                    double chosenNextLen = chosenVertice.Point.DistanceToPoint(nextVertice.Point);
+                    Edge prevEdge = new Edge(prevVertice, chosenVertice, chosenVertice.Polygon);
+                    Point oldPoint = chosenVertice.Point;
+                    chosenVertice.MoveVertice(p.X - oldPoint.X, p.Y - oldPoint.Y);
+                    int chosenPrevdx = chosenVertice.Point.X - prevVertice.Point.X;
+                    int chosenPrevdy = chosenVertice.Point.Y - prevVertice.Point.Y;
+                    double chosenPrevLen = chosenVertice.Point.DistanceToPoint(prevVertice.Point);
+                    double ratio = chosenPrevLen / chosenNextLen;
+                    int newdx = (int)(chosenNextdx * ratio);
+                    int newdy = (int)(chosenNextdy * ratio);
+                    int newX = chosenVertice.Point.X + newdx;
+                    int newY = chosenVertice.Point.Y + newdy;
+                    list.Remove(chosenVertice);
+                    dx = newX - nextVertice.Point.X;
+                    dy = newY - nextVertice.Point.Y;
+                    foreach (Vertice v in list)
+                    {
+                        v.MoveVertice(dx, dy);
+                    }
+                    ((EqualityRelation)chosenVertice.RelationNextVertice).UpdateLength();
+                } //dwie tej samej rownosci
+                else if (chosenVertice.RelationPrevVertice.IsEquality() && chosenVertice.RelationNextVertice.IsEquality()) //rozne ale obie rownosci
+                {
+                    var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
+                    var list2 = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
+                    list.AddRange(list2);
+                    list = list.Distinct().ToList();
+                    foreach (Vertice v in list)
+                        v.MoveVertice(dx, dy);
                 }
 
             }
@@ -144,10 +191,13 @@ namespace GK_Projekt1
             {
                 if (chosenVertice.RelationNextVertice.IsEquality())
                 {
+                    var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
                     EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationNextVertice;
-                    List<Vertice> list = new List<Vertice>();
-                    list.Add(chosenVertice);
-                    MoveAroundCircle(nextVertice, equalityRelation.Length, p, list);
+                    foreach (Vertice v in list)
+                        v.MoveVertice(dx, dy);
+                    // List<Vertice> list = new List<Vertice>();
+                    // list.Add(chosenVertice);
+                    // MoveAroundCircle(nextVertice, equalityRelation.Length, p, list);
                 }
 
             }
@@ -155,17 +205,19 @@ namespace GK_Projekt1
             {
                 if (chosenVertice.RelationPrevVertice.IsEquality())
                 {
-                    EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationPrevVertice;
-                    List<Vertice> list = new List<Vertice>();
-                    list.Add(chosenVertice);
-                    MoveAroundCircle(prevVertice, equalityRelation.Length, p, list);
+                    //EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationPrevVertice;
+                    //List<Vertice> list = new List<Vertice>();
+                    //list.Add(chosenVertice);
+                    //MoveAroundCircle(prevVertice, equalityRelation.Length, p, list);
+                    var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
+                    //EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationNextVertice;
+                    foreach (Vertice v in list)
+                        v.MoveVertice(dx, dy);
                 }
             }
             else
                 chosenVertice.Point = p;
-            DrawPolygons(image);
-            pictureBox.Image = image;
-            oldImage.Dispose();
+            UpdatePictureBox();
 
         }
 
@@ -197,19 +249,16 @@ namespace GK_Projekt1
         {
             if (chosenEdge == null)
                 return;
-            oldImage = pictureBox.Image;
-            image = new Bitmap(pictureBox.Width, pictureBox.Height);
             int dx = p.X - startingPoint.X;
             int dy = p.Y - startingPoint.Y;
-            Vertice v1 = chosenEdge.Vertice1;
-            Vertice v2 = chosenEdge.Vertice2;
-            v1.Point = new Point(v1.Point.X + dx, v1.Point.Y + dy);
-            v2.Point = new Point(v2.Point.X + dx, v2.Point.Y + dy);
+            var list = chosenEdge.Polygon.GetVerticesToMove(chosenEdge.Vertice2, Direction.Forward);
+            var list2 = chosenEdge.Polygon.GetVerticesToMove(chosenEdge.Vertice1, Direction.Backward);
+            list.AddRange(list2);
+            list = list.Distinct().ToList();
+            foreach (Vertice v in list)
+                v.MoveVertice(dx, dy);
             startingPoint = p;
-            DrawPolygons(image);
-            pictureBox.Image = image;
-            oldImage.Dispose();
-
+            UpdatePictureBox();
         }
 
         private void MovePolygon(Point p)
@@ -366,7 +415,13 @@ namespace GK_Projekt1
             if(E2 == null)
             {
                 if (chosenEdge == E1 || E1.Polygon != chosenEdge.Polygon)
+                {
+                    E1 = null;
+                    E2 = null;
+                    addEqualRButton.BackColor = normalButtonColor;
+                    equalRelation = false;
                     return;
+                }
 
                 E2 = chosenEdge;
                 chosenEdge = null;
@@ -420,7 +475,6 @@ namespace GK_Projekt1
                 {
                     v.MoveVertice(dx, dy);
                 }
-                debugLabel.Text = $"L(E1) - {E1.Length()}, L(E2) - {E2.Length()}, E1 - P{E1.Polygon.Index},{E1.Vertice1.Index}-{E1.Vertice2.Index}, E2 - P{E2.Polygon.Index},{E2.Vertice1.Index.ToString()}-{E2.Vertice2.Index.ToString()}";
 
                 UpdatePictureBox();
                 addEqualRButton.BackColor = normalButtonColor;
@@ -431,11 +485,70 @@ namespace GK_Projekt1
             }
         }
 
+        private void AddPerpendicularRelation()
+        {
+            if (chosenEdge == null)
+                return;
+            if (chosenEdge.Polygon.IsEdgeInRelation(chosenEdge))
+            {
+                E1 = null;
+                E2 = null;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+                perpenRelation = false;
+                return;
+            }
+            if (E1 == null)
+            {
+                E1 = chosenEdge;
+                return;
+            }
+            if (E2 == null)
+            {
+                if (chosenEdge == E1 || E1.Polygon != chosenEdge.Polygon)
+                {
+                    E1 = null;
+                    E2 = null;
+                    addPerpendicularRButton.BackColor = normalButtonColor;
+                    perpenRelation = false;
+                    return;
+                }
+
+                E2 = chosenEdge;
+
+                double dx = E1.Vertice2.Point.X - E1.Vertice1.Point.X;
+                double dy = E1.Vertice2.Point.Y - E1.Vertice1.Point.Y;
+
+                double a = dy / dx;
+                a = -1 / a;
+                int x = 100;
+                int y = (int)(x * a);
+                double vectorLen = Math.Sqrt(x * x + y * y);
+                double Len = E2.Length();
+
+                Vertice V1 = E2.Vertice1;
+                Vertice V2 = E2.Vertice2;
+
+
+                double ratio = Len / vectorLen;
+
+                x = (int)(x * ratio);
+                y = (int)(y * ratio);
+
+                V2.Point = new Point(V1.Point.X + x, V1.Point.Y + y);
+
+                UpdatePictureBox();
+                addPerpendicularRButton.BackColor = normalButtonColor;
+                perpenRelation = false;
+                E1 = null;
+                E2 = null;
+            }
+        }
 
 
 
 
-        private void MyDraw(Pen pen, int x1, int y1, int x2, int y2)
+
+            private void MyDraw(Pen pen, int x1, int y1, int x2, int y2)
         {
             
             if (myDrawFlag)
@@ -541,16 +654,15 @@ namespace GK_Projekt1
             if (drawingPolygon)
                 return;
             Point mousePoint = new Point(e.X, e.Y);
-            if(controlKeyDown && (chosenVertice != null || chosenEdge != null))
+            startingPoint = mousePoint;
+            if (controlKeyDown && (chosenVertice != null || chosenEdge != null))
             {
                 movingPolygon = true;
-                startingPoint = mousePoint;
                 return;
             }
             if(chosenEdge != null && controlKeyDown == false)
             {
                 movingEdge = true;
-                startingPoint = mousePoint;
                 return;
             }
             if(chosenVertice != null && controlKeyDown == false)
@@ -657,7 +769,12 @@ namespace GK_Projekt1
             if(equalRelation)
             {
                 AddEqualityRelation();
-                
+                return;
+            }
+
+            if(perpenRelation)
+            {
+                AddPerpendicularRelation();
             }
 
         }
@@ -691,6 +808,7 @@ namespace GK_Projekt1
         private void pictureBox_Layout(object sender, LayoutEventArgs e)
         {
             RefreshPolygons();
+            //UpdatePictureBox();
         }
 
         
@@ -808,6 +926,11 @@ namespace GK_Projekt1
             equalRelation = true;
         }
 
+        private void addPerpendicularRButton_Click(object sender, EventArgs e)
+        {
+            perpenRelation = true;
+            addPerpendicularRButton.BackColor = activeButtonColor;
+        }
 
 
 
@@ -819,6 +942,7 @@ namespace GK_Projekt1
         private void pictureBox_Layout(object sender, EventArgs e)
         {
             RefreshPolygons();
+            //UpdatePictureBox();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -857,8 +981,8 @@ namespace GK_Projekt1
                             MyDrawImage(blackPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
                         if(e.Polygon.IsEdgeInRelation(e))
                         {
-
-                            g.DrawImage(EqualIcon, (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2, 30, 20);
+                            g.DrawString($"={e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush, (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2);
+                            //g.DrawImage(EqualIcon, (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2, 30, 20);
                         }
 
                     }
@@ -881,12 +1005,14 @@ namespace GK_Projekt1
             DrawPolygons(image);
             pictureBox.Image = image;
             oldImage.Dispose();
+            //Bitmap bitmap = (Bitmap)pictureBox.Image;
+            //using (Graphics g = Graphics.FromImage(bitmap))
+            //    g.Clear(pictureBox.BackColor);
+            //DrawPolygons(bitmap);
+            //pictureBox.Image = bitmap;
         }
 
         
-
-
-       
     }
     public enum Direction { Forward, Backward };
 }

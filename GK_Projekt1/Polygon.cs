@@ -13,7 +13,7 @@ namespace GK_Projekt1
         private List<Edge> edges = new List<Edge>();
         private int index;
         private bool fullPolygon = false;
-
+        
         public List<Relation> relations = new List<Relation>();
         public List<EqualityRelation> equalityRelations = new List<EqualityRelation>();
 
@@ -60,6 +60,9 @@ namespace GK_Projekt1
             get => edges.Count;
         }
 
+        public int RelationCount => relations.Count;
+
+        public int RelationIndex(Relation r) => relations.IndexOf(r);
 
         public Vertice this[int key]
         {
@@ -181,7 +184,7 @@ namespace GK_Projekt1
 
         public void AddEqualityRelation(Edge e1, Edge e2)
         {
-            EqualityRelation r = new EqualityRelation(e1, e2);
+            EqualityRelation r = new EqualityRelation(e1, e2, relations.Count );
             relations.Add(r);
             e1.Vertice1.RelationNextVertice = r;
             e1.Vertice2.RelationPrevVertice = r;

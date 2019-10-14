@@ -46,3 +46,6 @@ Algorytm A:
 {
 	
 }
+
+
+Przypadek wierzcholek z dwoma krawedziamy tej samej relacji

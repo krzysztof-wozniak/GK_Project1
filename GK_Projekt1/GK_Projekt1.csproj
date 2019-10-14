@@ -54,6 +54,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="PerpendicularRelation.cs" />
     <Compile Include="PointExtention.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="Program.cs" />
