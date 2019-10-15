@@ -196,7 +196,29 @@ namespace GK_Projekt1
         {
             if (relations.Count == 0)
                 return;
+            Relation r = relations[relations.Count - 1];
+            r.E1V1.RelationNextVertice = null;
+            r.E1V2.RelationPrevVertice = null;
+            r.E2V1.RelationNextVertice = null;
+            r.E2V2.RelationPrevVertice = null;
             relations.RemoveAt(relations.Count - 1);
+        }
+
+        public void DeleteRelation(Edge e)
+        {
+            if(e.Polygon.IsEdgeInRelation(e))
+            {
+                Relation r = e.Vertice1.RelationNextVertice;
+                for(int i = r.Index + 1; i < e.Polygon.RelationCount; i++)
+                {
+                    e.Polygon.relations[i].ChangeIndex(i - 1);
+                }
+                r.E1V1.RelationNextVertice = null;
+                r.E1V2.RelationPrevVertice = null;
+                r.E2V1.RelationNextVertice = null;
+                r.E2V2.RelationPrevVertice = null;
+                relations.RemoveAt(r.Index);
+            }
         }
 
 

@@ -12,8 +12,8 @@ namespace GK_Projekt1
         private Point point;
         private int index; //index of the vertice in the polygon
         private Polygon polygon;
-        private Relation relationNextVertice;
-        private Relation relationPrevVertice;
+        private Relation relationNextVertice = null;
+        private Relation relationPrevVertice = null;
 
         public Polygon Polygon { get => polygon; set => polygon = value; }
 

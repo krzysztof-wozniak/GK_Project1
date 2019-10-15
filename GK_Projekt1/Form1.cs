@@ -32,6 +32,8 @@ namespace GK_Projekt1
         private bool midPoint = false;
         private bool equalRelation = false;
         private bool perpenRelation = false;
+        private bool deletingRelation = false;
+    
 
         private Font font = new Font("Calibri", 15);
         private Brush fontBrush = new SolidBrush(Color.Green);
@@ -62,6 +64,7 @@ namespace GK_Projekt1
         private SolidBrush backColorBrush = null;
         private SolidBrush chosenBrush = new SolidBrush(Color.Orange);
         private SolidBrush normalBrush = new SolidBrush(Color.Black);
+        private Pen relationPen = new Pen(Color.Red, penWidth);
 
         private Point startingPoint;
 
@@ -119,9 +122,7 @@ namespace GK_Projekt1
                 return;
             }
         }
-
-
-
+        
         private void MoveVertice(Point p)//nie dziala dla trojkata z relacja, trzeba zrobic inna GetVerticesToMove
         {
             //oldImage = pictureBox.Image;
@@ -297,6 +298,9 @@ namespace GK_Projekt1
             }
             else
             {
+                chosenVertice.Polygon.DeleteRelation(new Edge(chosenVertice, chosenVertice.GetNextVertice(), chosenVertice.Polygon));
+                chosenVertice.Polygon.DeleteRelation(new Edge(chosenVertice.GetPreviousVertice(), chosenVertice, chosenVertice.Polygon));
+
                 chosenVertice.Polygon.DeleteVertice(chosenVertice);
                 chosenVertice = null;
             }
@@ -534,8 +538,10 @@ namespace GK_Projekt1
                 x = (int)(x * ratio);
                 y = (int)(y * ratio);
 
-                V2.Point = new Point(V1.Point.X + x, V1.Point.Y + y);
-
+                //V2.Point = new Point(V1.Point.X + x, V1.Point.Y + y);
+                var list = V2.Polygon.GetVerticesToMove(V2, Direction.Backward);
+                foreach(var v in list)
+                    v.MoveVertice(x, y);
                 UpdatePictureBox();
                 addPerpendicularRButton.BackColor = normalButtonColor;
                 perpenRelation = false;
@@ -543,12 +549,8 @@ namespace GK_Projekt1
                 E2 = null;
             }
         }
-
-
-
-
-
-            private void MyDraw(Pen pen, int x1, int y1, int x2, int y2)
+        
+        private void MyDraw(Pen pen, int x1, int y1, int x2, int y2)
         {
             
             if (myDrawFlag)
@@ -606,7 +608,7 @@ namespace GK_Projekt1
                 }
             }
         }
-
+        
 
 
         private (double, Edge) FindNearestEdge(Point point)
@@ -775,11 +777,27 @@ namespace GK_Projekt1
             if(perpenRelation)
             {
                 AddPerpendicularRelation();
+                return;
+            }
+
+            if(deletingRelation)
+            {
+                deleteRelation();
             }
 
         }
 
-        
+        private void deleteRelation()
+        {
+            if (chosenEdge == null)
+                return;
+            if(chosenEdge.Polygon.IsEdgeInRelation(chosenEdge))
+            {
+                chosenEdge.Polygon.DeleteRelation(chosenEdge);
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
+            }
+        }
 
         private void RefreshPolygons()
         {
@@ -995,6 +1013,10 @@ namespace GK_Projekt1
                 {
                     g.FillEllipse(chosenBrush, chosenVertice.Point.X - radius / 2, chosenVertice.Point.Y - radius / 2, radius, radius);
                 }
+                if(E1 != null)
+                {
+                    MyDrawImage(relationPen, E1.Vertice1.Point.X, E1.Vertice1.Point.Y, E1.Vertice2.Point.X, E1.Vertice2.Point.Y, image);
+                }
             }
         }
 
@@ -1012,7 +1034,11 @@ namespace GK_Projekt1
             //pictureBox.Image = bitmap;
         }
 
-        
+        private void deleteRelationButton_Click(object sender, EventArgs e)
+        {
+            deletingRelation = true;
+            deleteRelationButton.BackColor = activeButtonColor;
+        }
     }
     public enum Direction { Forward, Backward };
 }

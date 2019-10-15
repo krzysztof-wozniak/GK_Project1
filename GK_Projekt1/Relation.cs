@@ -15,7 +15,14 @@ namespace GK_Projekt1
         protected int index;
 
         public int Index { get => index; }
-       
+
+        public Vertice E1V1 { get => edge1Vertice1; }
+        public Vertice E1V2 { get => edge1Vertice2; }
+        public Vertice E2V1 { get => edge2Vertice1; }
+        public Vertice E2V2 { get => edge2Vertice2; }
+
+
+
         public Relation(Vertice v1, Vertice v2, Vertice v3, Vertice v4, int index)
         {
             edge1Vertice1 = v1;

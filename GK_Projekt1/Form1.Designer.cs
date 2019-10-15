@@ -41,6 +41,7 @@
             this.debugLabel = new System.Windows.Forms.ToolStripLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
+            this.deleteRelationButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -57,7 +58,8 @@
             this.toolStripSeparator1,
             this.addEqualRButton,
             this.addPerpendicularRButton,
-            this.debugLabel});
+            this.debugLabel,
+            this.deleteRelationButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(800, 25);
@@ -178,6 +180,16 @@
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             this.pictureBox.Resize += new System.EventHandler(this.pictureBox_Layout);
             // 
+            // deleteRelationButton
+            // 
+            this.deleteRelationButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.deleteRelationButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteRelationButton.Image")));
+            this.deleteRelationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deleteRelationButton.Name = "deleteRelationButton";
+            this.deleteRelationButton.Size = new System.Drawing.Size(23, 22);
+            this.deleteRelationButton.Text = "Remove a relation";
+            this.deleteRelationButton.Click += new System.EventHandler(this.deleteRelationButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -212,6 +224,7 @@
         private System.Windows.Forms.ToolStripButton addEqualRButton;
         private System.Windows.Forms.ToolStripButton addPerpendicularRButton;
         private System.Windows.Forms.ToolStripLabel debugLabel;
+        private System.Windows.Forms.ToolStripButton deleteRelationButton;
     }
 }
 
