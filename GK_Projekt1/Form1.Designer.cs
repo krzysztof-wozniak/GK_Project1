@@ -34,14 +34,13 @@
             this.midPointButton = new System.Windows.Forms.ToolStripButton();
             this.deleteVerticeButton = new System.Windows.Forms.ToolStripButton();
             this.deletePolygonButton = new System.Windows.Forms.ToolStripButton();
-            this.nPolygonsLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addEqualRButton = new System.Windows.Forms.ToolStripButton();
             this.addPerpendicularRButton = new System.Windows.Forms.ToolStripButton();
             this.debugLabel = new System.Windows.Forms.ToolStripLabel();
+            this.deleteRelationButton = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.pictureBox = new System.Windows.Forms.PictureBox();
-            this.deleteRelationButton = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -54,7 +53,6 @@
             this.midPointButton,
             this.deleteVerticeButton,
             this.deletePolygonButton,
-            this.nPolygonsLabel,
             this.toolStripSeparator1,
             this.addEqualRButton,
             this.addPerpendicularRButton,
@@ -111,13 +109,6 @@
             this.deletePolygonButton.ToolTipText = "Delete a polygon";
             this.deletePolygonButton.Click += new System.EventHandler(this.deletePolygonButton_Click);
             // 
-            // nPolygonsLabel
-            // 
-            this.nPolygonsLabel.Name = "nPolygonsLabel";
-            this.nPolygonsLabel.Size = new System.Drawing.Size(86, 22);
-            this.nPolygonsLabel.Text = "toolStripLabel1";
-            this.nPolygonsLabel.Visible = false;
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -150,6 +141,16 @@
             this.debugLabel.Name = "debugLabel";
             this.debugLabel.Size = new System.Drawing.Size(0, 22);
             // 
+            // deleteRelationButton
+            // 
+            this.deleteRelationButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.deleteRelationButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteRelationButton.Image")));
+            this.deleteRelationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deleteRelationButton.Name = "deleteRelationButton";
+            this.deleteRelationButton.Size = new System.Drawing.Size(23, 22);
+            this.deleteRelationButton.Text = "Remove a relation";
+            this.deleteRelationButton.Click += new System.EventHandler(this.deleteRelationButton_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
@@ -180,16 +181,6 @@
             this.pictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseUp);
             this.pictureBox.Resize += new System.EventHandler(this.pictureBox_Layout);
             // 
-            // deleteRelationButton
-            // 
-            this.deleteRelationButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deleteRelationButton.Image = ((System.Drawing.Image)(resources.GetObject("deleteRelationButton.Image")));
-            this.deleteRelationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.deleteRelationButton.Name = "deleteRelationButton";
-            this.deleteRelationButton.Size = new System.Drawing.Size(23, 22);
-            this.deleteRelationButton.Text = "Remove a relation";
-            this.deleteRelationButton.Click += new System.EventHandler(this.deleteRelationButton_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -219,7 +210,6 @@
         private System.Windows.Forms.ToolStripButton deleteVerticeButton;
         private System.Windows.Forms.ToolStripButton midPointButton;
         private System.Windows.Forms.ToolStripButton deletePolygonButton;
-        private System.Windows.Forms.ToolStripLabel nPolygonsLabel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton addEqualRButton;
         private System.Windows.Forms.ToolStripButton addPerpendicularRButton;

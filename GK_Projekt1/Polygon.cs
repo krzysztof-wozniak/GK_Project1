@@ -192,6 +192,15 @@ namespace GK_Projekt1
             e2.Vertice2.RelationPrevVertice = r;
         }
 
+        public void AddPerpendicularRelation(Edge e1, Edge e2)
+        {
+            PerpendicularRelation r = new PerpendicularRelation(e1, e2, relations.Count);
+            relations.Add(r);
+            e1.Vertice1.RelationNextVertice = r;
+            e1.Vertice2.RelationPrevVertice = r;
+            e2.Vertice1.RelationNextVertice = r;
+            e2.Vertice2.RelationPrevVertice = r;
+        }
         public void DeleteLastRelation()
         {
             if (relations.Count == 0)

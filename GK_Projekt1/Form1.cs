@@ -33,6 +33,7 @@ namespace GK_Projekt1
         private bool equalRelation = false;
         private bool perpenRelation = false;
         private bool deletingRelation = false;
+        private bool antialias = true;
     
 
         private Font font = new Font("Calibri", 15);
@@ -82,7 +83,7 @@ namespace GK_Projekt1
             image = new Bitmap(pictureBox.Width, pictureBox.Height);
             pictureBox.Image = image;
             this.DoubleBuffered = true;
-            nPolygonsLabel.Text = "Number of polygons: 0";
+            //nPolygonsLabel.Text = "Number of polygons: 0";
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             Stream myStream = assembly.GetManifestResourceStream("GK_Projekt1.equal-symbol2.jpg");
@@ -332,7 +333,7 @@ namespace GK_Projekt1
             chosenVertice = null;
             chosenEdge = null;
             deletePolygonButton.BackColor = normalButtonColor;
-            nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
+            //nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
 
         }
 
@@ -345,6 +346,7 @@ namespace GK_Projekt1
         {
             if (chosenEdge == null)
                 return;
+            chosenEdge.Polygon.DeleteRelation(chosenEdge);
             oldImage = pictureBox.Image;
             image = new Bitmap(pictureBox.Width, pictureBox.Height);
             Point newPoint = new Point((chosenEdge.Vertice1.Point.X + chosenEdge.Vertice2.Point.X) / 2, (chosenEdge.Vertice1.Point.Y + chosenEdge.Vertice2.Point.Y) / 2);
@@ -372,7 +374,7 @@ namespace GK_Projekt1
                 currentPolygon = null;
                 drawingPolygon = false;
                 addPolygonButton.BackColor = normalButtonColor;
-                nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
+                //nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
                 return;
             }
 
@@ -386,16 +388,9 @@ namespace GK_Projekt1
 
             Vertice v = new Vertice(new Point(mouseEventArgs.X, mouseEventArgs.Y), currentPolygon, currentPolygon.VerticeCount);
             currentPolygon.AddVertice(v);
-
-            //using (Graphics g = pictureBox.CreateGraphics())
-            //{
-            //    g.FillEllipse(normalBrush, mouseEventArgs.X - radius / 2, mouseEventArgs.Y - radius / 2, radius, radius);
-            //}
+            
             if (currentPolygon.VerticeCount < 2)
                 return;
-            //a = v.GetPreviousVertice();
-            //b = v;
-            //MyDraw(blackPen, a.Point.X, a.Point.Y, b.Point.X, b.Point.Y);
             UpdatePictureBox();
         }
 
@@ -518,14 +513,15 @@ namespace GK_Projekt1
                 }
 
                 E2 = chosenEdge;
+                E2.Polygon.AddPerpendicularRelation(E1, E2);
 
                 double dx = E1.Vertice2.Point.X - E1.Vertice1.Point.X;
                 double dy = E1.Vertice2.Point.Y - E1.Vertice1.Point.Y;
 
                 double a = dy / dx;
-                a = -1 / a;
-                int x = 100;
-                int y = (int)(x * a);
+                a = -1 / a; //prostopadle
+                int x = 20;
+                int y = (int)Math.Round(x * a);
                 double vectorLen = Math.Sqrt(x * x + y * y);
                 double Len = E2.Length();
 
@@ -535,11 +531,15 @@ namespace GK_Projekt1
 
                 double ratio = Len / vectorLen;
 
-                x = (int)(x * ratio);
-                y = (int)(y * ratio);
+                x = (int)Math.Round(x * ratio);
+                y = (int)Math.Round(y * ratio);
+
+                x = V1.Point.X + x - V2.Point.X;
+                y = V1.Point.Y + y - V2.Point.Y;
+
 
                 //V2.Point = new Point(V1.Point.X + x, V1.Point.Y + y);
-                var list = V2.Polygon.GetVerticesToMove(V2, Direction.Backward);
+                var list = V2.Polygon.GetVerticesToMove(V2, Direction.Forward);
                 foreach(var v in list)
                     v.MoveVertice(x, y);
                 UpdatePictureBox();
@@ -578,6 +578,8 @@ namespace GK_Projekt1
             {
                 using (Graphics g = pictureBox.CreateGraphics())
                 {
+                    if (antialias)
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                     g.DrawLine(pen, x1, y1, x2, y2);
                 }
             }
@@ -604,6 +606,8 @@ namespace GK_Projekt1
             {
                 using (Graphics g = Graphics.FromImage(image))
                 {
+                    if (antialias)
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                     g.DrawLine(pen, x1, y1, x2, y2);
                 }
             }
@@ -999,7 +1003,12 @@ namespace GK_Projekt1
                             MyDrawImage(blackPen, curVertice.Point.X, curVertice.Point.Y, nextVertice.Point.X, nextVertice.Point.Y, image);
                         if(e.Polygon.IsEdgeInRelation(e))
                         {
-                            g.DrawString($"={e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush, (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2);
+                            if (e.Vertice1.RelationNextVertice.IsEquality())
+                                g.DrawString($"={e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush,
+                                    (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2);
+                            else
+                                g.DrawString($"P{e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush,
+                                    (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2);
                             //g.DrawImage(EqualIcon, (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2, 30, 20);
                         }
 
