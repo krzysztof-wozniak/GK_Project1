@@ -49,3 +49,43 @@ Algorytm A:
 
 
 Przypadek wierzcholek z dwoma krawedziamy tej samej relacji
+
+
+
+
+
+
+//tu do E1 dopasowuje E2
+
+double dx = E1.Vertice2.Point.X - E1.Vertice1.Point.X;
+double dy = E1.Vertice2.Point.Y - E1.Vertice1.Point.Y;
+
+double a = dy / dx;
+a = -1 / a; //prostopadle
+                int x = 20;
+int y = (int)Math.Round(x * a);
+double vectorLen = Math.Sqrt(x * x + y * y);
+double Len = E2.Length();
+
+Vertice V1 = E2.Vertice1;
+Vertice V2 = E2.Vertice2;
+
+
+double ratio = Len / vectorLen;
+
+x = (int) Math.Round(x* ratio);
+y = (int) Math.Round(y* ratio);
+
+x = V1.Point.X + x - V2.Point.X;
+y = V1.Point.Y + y - V2.Point.Y;
+
+
+//V2.Point = new Point(V1.Point.X + x, V1.Point.Y + y);
+var list = V2.Polygon.GetVerticesToMove(V2, Direction.Forward);
+foreach(var v in list)
+    v.MoveVertice(x, y);
+UpdatePictureBox();
+addPerpendicularRButton.BackColor = normalButtonColor;
+perpenRelation = false;
+E1 = null;
+E2 = null;

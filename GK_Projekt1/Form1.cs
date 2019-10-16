@@ -67,6 +67,9 @@ namespace GK_Projekt1
         private SolidBrush normalBrush = new SolidBrush(Color.Black);
         private Pen relationPen = new Pen(Color.Red, penWidth);
 
+        //WMPLib.WindowsMediaPlayer player = new WMPLib.WindowsMediaPlayer();
+
+
         private Point startingPoint;
 
         public Form1()
@@ -88,6 +91,11 @@ namespace GK_Projekt1
             Assembly assembly = Assembly.GetExecutingAssembly();
             Stream myStream = assembly.GetManifestResourceStream("GK_Projekt1.equal-symbol2.jpg");
             EqualIcon = new Bitmap(myStream);
+            //myStream = assembly.GetManifestResourceStream("GK_Projekt1.sound.mp3");
+            //player.URL = myStream.ToString();
+            //player.controls.play();
+            
+             //myStream.ToString();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -126,8 +134,6 @@ namespace GK_Projekt1
         
         private void MoveVertice(Point p)//nie dziala dla trojkata z relacja, trzeba zrobic inna GetVerticesToMove
         {
-            //oldImage = pictureBox.Image;
-            //image = new Bitmap(pictureBox.Width, pictureBox.Height);
             int dx = p.X - chosenVertice.Point.X;
             int dy = p.Y - chosenVertice.Point.Y;
             Vertice nextVertice = chosenVertice.GetNextVertice();
@@ -178,7 +184,62 @@ namespace GK_Projekt1
                     }
                     ((EqualityRelation)chosenVertice.RelationNextVertice).UpdateLength();
                 } //dwie tej samej rownosci
-                else if (chosenVertice.RelationPrevVertice.IsEquality() && chosenVertice.RelationNextVertice.IsEquality()) //rozne ale obie rownosci
+                else if(chosenVertice.RelationNextVertice == chosenVertice.RelationPrevVertice && !chosenVertice.RelationNextVertice.IsEquality())//ta sama prostopadlosc
+                {
+                    var list = nextVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);//jesli forward blizej to ruszamy next
+                    var list2 = prevVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
+                    if (list2.Count < list.Count)
+                    {
+                        backward = true;
+                        list = list2;
+
+                    }
+                    if (backward)
+                    {
+                        Vertice temp;
+                        temp = nextVertice;
+                        nextVertice = prevVertice;
+                        prevVertice = temp;
+                    }// prev stały
+
+                    double deltaX = chosenVertice.Point.X - prevVertice.Point.X;
+                    double deltaY = chosenVertice.Point.Y - prevVertice.Point.Y;
+
+                    if (deltaX < 2 && deltaX > -2)
+                        deltaX = 1;
+                    if (deltaY < 2 && deltaY > -2)
+                        deltaY = 1;
+                    double a = deltaY / deltaX;
+                    a = -1 / a; //prostopadle
+                    int x = 100;
+                    int y = (int)Math.Round(x * a);
+                    double vectorLen = Math.Sqrt(x * x + y * y);
+                    double Len = chosenVertice.Point.DistanceToPoint(nextVertice.Point);
+
+                   
+
+
+                    double ratio = Len / vectorLen;
+
+                    x = (int)Math.Round(x * ratio);
+                    y = (int)Math.Round(y * ratio);
+
+                    x = p.X + x - nextVertice.Point.X;
+                    y = p.Y + y - nextVertice.Point.Y;
+
+
+                    //V2.Point = new Point(V1.Point.X + x, V1.Point.Y + y);
+                    //var list = V2.Polygon.GetVerticesToMove(V2, Direction.Forward);
+                    foreach (var v in list)
+                        v.MoveVertice(x, y);
+
+
+                    chosenVertice.Point = p;
+
+
+
+                }
+                else
                 {
                     var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
                     var list2 = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
@@ -187,35 +248,18 @@ namespace GK_Projekt1
                     foreach (Vertice v in list)
                         v.MoveVertice(dx, dy);
                 }
-
             }
             else if(nextEdgeRelation)//poprzedni mozna zmieniac
             {
-                if (chosenVertice.RelationNextVertice.IsEquality())
-                {
-                    var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
-                    EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationNextVertice;
-                    foreach (Vertice v in list)
-                        v.MoveVertice(dx, dy);
-                    // List<Vertice> list = new List<Vertice>();
-                    // list.Add(chosenVertice);
-                    // MoveAroundCircle(nextVertice, equalityRelation.Length, p, list);
-                }
-
+                var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Forward);
+                foreach (Vertice v in list)
+                    v.MoveVertice(dx, dy);
             }
             else if(prevEdgeRelation)
-            {
-                if (chosenVertice.RelationPrevVertice.IsEquality())
-                {
-                    //EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationPrevVertice;
-                    //List<Vertice> list = new List<Vertice>();
-                    //list.Add(chosenVertice);
-                    //MoveAroundCircle(prevVertice, equalityRelation.Length, p, list);
-                    var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
-                    //EqualityRelation equalityRelation = (EqualityRelation)chosenVertice.RelationNextVertice;
-                    foreach (Vertice v in list)
-                        v.MoveVertice(dx, dy);
-                }
+            {   
+                var list = chosenVertice.Polygon.GetVerticesToMove(chosenVertice, Direction.Backward);
+                foreach (Vertice v in list)
+                    v.MoveVertice(dx, dy);
             }
             else
                 chosenVertice.Point = p;
@@ -315,6 +359,8 @@ namespace GK_Projekt1
             Cursor = Cursors.Arrow;
             deletingPoint = false;
             deleteVerticeButton.BackColor = normalButtonColor;
+            
+            
 
         }
 
@@ -1007,7 +1053,7 @@ namespace GK_Projekt1
                                 g.DrawString($"={e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush,
                                     (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2);
                             else
-                                g.DrawString($"P{e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush,
+                                g.DrawString($"⊥{e.Vertice1.RelationNextVertice.Index.ToString()}", font, normalBrush,
                                     (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2);
                             //g.DrawImage(EqualIcon, (curVertice.Point.X + nextVertice.Point.X) / 2, (curVertice.Point.Y + nextVertice.Point.Y) / 2, 30, 20);
                         }
