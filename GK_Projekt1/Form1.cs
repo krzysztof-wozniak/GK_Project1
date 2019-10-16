@@ -28,19 +28,16 @@ namespace GK_Projekt1
         private bool movingVertice = false;
         private bool movingEdge = false;
         private bool controlKeyDown = false;
-        private bool myDrawFlag = false;
         private bool midPoint = false;
         private bool equalRelation = false;
         private bool perpenRelation = false;
         private bool deletingRelation = false;
         private bool antialias = true;
-    
 
-        private Font font = new Font("Calibri", 15);
-        private Brush fontBrush = new SolidBrush(Color.Green);
 
-        private Bitmap EqualIcon;
-        
+        private bool myDrawFlag = true;
+
+
 
         private List<Polygon> polygons = new List<Polygon>();
         private Polygon currentPolygon;
@@ -48,8 +45,7 @@ namespace GK_Projekt1
         private Edge chosenEdge = null;
         private Edge E1 = null;
         private Edge E2 = null;
-
-        List<(Vertice, Vertice)> relationlist = new List<(Vertice, Vertice)>();
+        private Point startingPoint;
 
 
         private const int minDistanceVertice = 15;
@@ -66,11 +62,10 @@ namespace GK_Projekt1
         private SolidBrush chosenBrush = new SolidBrush(Color.Orange);
         private SolidBrush normalBrush = new SolidBrush(Color.Black);
         private Pen relationPen = new Pen(Color.Red, penWidth);
+        private Font font = new Font("Calibri", 15);
+        private Brush fontBrush = new SolidBrush(Color.Green);
 
-        //WMPLib.WindowsMediaPlayer player = new WMPLib.WindowsMediaPlayer();
 
-
-        private Point startingPoint;
 
         public Form1()
         {
@@ -86,16 +81,6 @@ namespace GK_Projekt1
             image = new Bitmap(pictureBox.Width, pictureBox.Height);
             pictureBox.Image = image;
             this.DoubleBuffered = true;
-            //nPolygonsLabel.Text = "Number of polygons: 0";
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream myStream = assembly.GetManifestResourceStream("GK_Projekt1.equal-symbol2.jpg");
-            EqualIcon = new Bitmap(myStream);
-            //myStream = assembly.GetManifestResourceStream("GK_Projekt1.sound.mp3");
-            //player.URL = myStream.ToString();
-            //player.controls.play();
-            
-             //myStream.ToString();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -132,7 +117,7 @@ namespace GK_Projekt1
             }
         }
         
-        private void MoveVertice(Point p)//nie dziala dla trojkata z relacja, trzeba zrobic inna GetVerticesToMove
+        private void MoveVertice(Point p)
         {
             int dx = p.X - chosenVertice.Point.X;
             int dy = p.Y - chosenVertice.Point.Y;
@@ -266,30 +251,7 @@ namespace GK_Projekt1
             UpdatePictureBox();
 
         }
-
-        private void MoveAroundCircle(Vertice vCenter, double Length, Point point, List<Vertice> list)
-        {
-            double dx = point.X - vCenter.Point.X;
-            double dy = point.Y - vCenter.Point.Y;
-            double distanceToCenter = Math.Sqrt(Math.Pow(vCenter.Point.X - point.X, 2) + Math.Pow(vCenter.Point.Y - point.Y, 2));
-            double ratio = Length / distanceToCenter;
-            //poszlo do gory
-            
-            dx *= ratio;
-            dy *= ratio;
-            //double ratio = / Length;
-            int x = vCenter.Point.X + (int)dx;
-            int y = vCenter.Point.Y + (int)dy;
-
-            int dx1 = x - chosenVertice.Point.X;
-            int dy1 = y - chosenVertice.Point.Y;
-
-            foreach(Vertice v in list)
-            {
-                v.MoveVertice(dx1, dy1);
-            }
-
-        }
+        
 
         private void MoveEdge(Point p)
         {
@@ -349,13 +311,7 @@ namespace GK_Projekt1
                 chosenVertice.Polygon.DeleteVertice(chosenVertice);
                 chosenVertice = null;
             }
-            //oldImage = pictureBox.Image;
-            //image = new Bitmap(pictureBox.Width, pictureBox.Height);
-            //DrawPolygons(image);
-            //pictureBox.Image = image;
-            //oldImage.Dispose();
             UpdatePictureBox();
-            //RefreshPolygons();
             Cursor = Cursors.Arrow;
             deletingPoint = false;
             deleteVerticeButton.BackColor = normalButtonColor;
@@ -379,7 +335,6 @@ namespace GK_Projekt1
             chosenVertice = null;
             chosenEdge = null;
             deletePolygonButton.BackColor = normalButtonColor;
-            //nPolygonsLabel.Text = "Number of polygons: " + polygons.Count.ToString();
 
         }
 
@@ -601,12 +556,12 @@ namespace GK_Projekt1
             
             if (myDrawFlag)
             {
-                //Bitmap image = Bitmap
-                //image = new Bitmap(pictureBox.Image);
-                int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
-                int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+                int dx = Math.Abs(x2 - x1);
+                int dy = Math.Abs(y2 - y1);
+                int sx = x1 < x2 ? 1 : -1;
+                int sy = y1 < y2 ? 1 : -1;
                 int err = (dx > dy ? dx : -dy) / 2, e2;
-                for (; ; )
+                while(true)
                 {
                     if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
                         ((Bitmap)pictureBox.Image).SetPixel(x1, y1, pen.Color);
@@ -616,9 +571,6 @@ namespace GK_Projekt1
                     if (e2 < dy) { err += dx; y1 += sy; }
                 }
                 pictureBox.Refresh();
-
-                //pictureBox.Image = image;
-                //oldImage.Dispose();
             }
             else
             {
@@ -635,17 +587,27 @@ namespace GK_Projekt1
         {
             if (myDrawFlag)
             {
-                int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
-                int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
-                int err = (dx > dy ? dx : - dy) / 2, e2;
-                for (;;)
+                int dx = Math.Abs(x2 - x1);
+                int dy = Math.Abs(y2 - y1);
+                int sx = x1 < x2 ? 1 : -1;//x rosnie albo maleje
+                int sy = y1 < y2 ? 1 : -1;//y rosnie albo maleje
+                int err = (dx > dy ? dx : -dy) / 2;
+                int e2;
+                while(x1 != x2 && y1 != y2)
                 {
-                    if(x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
+                    if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
                         image.SetPixel(x1, y1, pen.Color);
-                    if (x1 == x2 && y1 == y2) break;
                     e2 = err;
-                    if (e2 > -dx) { err -= dy; x1 += sx; }
-                    if (e2 < dy) { err += dx; y1 += sy; }
+                    if (e2 > -dx)
+                    {
+                        err -= dy;
+                        x1 += sx;
+                    }
+                    if (e2 < dy)
+                    {
+                        err += dx;
+                        y1 += sy;
+                    }
                 }
             }
             else
