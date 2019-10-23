@@ -81,7 +81,7 @@ namespace GK_Projekt1
             image = new Bitmap(pictureBox.Width, pictureBox.Height);
             pictureBox.Image = image;
             this.DoubleBuffered = true;
-            /*Polygon pol = new Polygon(0);
+            Polygon pol = new Polygon(0);
             polygons.Add(pol);
             Point[] points = new Point[]
             {
@@ -119,7 +119,7 @@ namespace GK_Projekt1
             E1 = new Edge(vertices[10], vertices[0], pol);
             chosenEdge = new Edge(vertices[8], vertices[9], pol);
             AddPerpendicularRelation();
-            UpdatePictureBox();*/
+            UpdatePictureBox();
             
         }
 

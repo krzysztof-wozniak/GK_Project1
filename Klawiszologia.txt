@@ -1,0 +1,34 @@
+Klawiszologia:
+Dodawanie wieloboku:
+    Klikn¹æ przycisk dodawania wieloboku (pierwszy przycisk), a nastêpnie klikaj¹c wybieraæ kolejne wierzcho³ki. 
+    Aby zakoñczyæ klikn¹æ pierwszy wierzcho³ek.
+Dodawanie wierzcho³ka w œrodku krawêdzi:
+    Klikn¹æ odpowiedni przycisk (drugi przycisk), a nastêpnie wybraæ krawêdŸ.
+Usuwanie wierzcho³ka:
+    Klikn¹æ przycisk usuwania wierzcho³ka (trzeci przycisk), a nastêpnie wybraæ wierzcho³ek do usuniêcia.
+Usuwanie wieloboku:
+    Klikn¹æ przycisk usuwania wieloboku (czwarty przycisk), a nastêpnie wybraæ wielobok do usuniêcia.
+Przesuwanie krawêdzi:
+    Z³apac krawêdŸ i przesun¹æ.
+Przesuwanie wierzcho³ka:
+    Z³apaæ wierzcho³ek i przesun¹æ.
+Przesuwanie wieloboku:
+    Trzymaj¹c Ctrl z³apaæ wierzcho³ek lub krawêdŸ i przesun¹æ.
+Dodawanie relacji:
+    Wybraæ interesuj¹c¹ relacjê, a nastêpnie wybrac dwie krawêdzie.
+Usuwanie relacji:
+    Klikn¹æ przycisk usuwania relacji (szósty przycisk), a nastêpnie wybraæ dowoln¹ krawêdŸ nale¿¹c¹ do danej relacji.
+
+
+Za³o¿enia:
+Relacja zostanie dodana, jeœli po dodaniu relacji zosta³a by co najmniej jedna krawêdŸ bez relacji.
+
+Algorytm relacji:
+Def Segment - Ci¹g wierzcho³ków (Krawêdzi) ze sob¹ s¹siaduj¹cych, taki ¿e ka¿da krawêdŸ w nim zawarta jest w pewnej relacji.
+
+Relacja równoœci:
+    Niech v1-v2 bêdzie pierwsza krawêdzi¹ w relacji, a v3-v4 drug¹ krawêdzi¹. 
+    Algorytm szuka maksymalnego segmentu od v3 w stronê przeciwn¹ ni¿ v4, oraz od v4 w stronê przeciwn¹ ni¿ v3, i wybiera mniejszy. 
+    Jeœli segment zawiera w sobie wierzcho³ek v1 lub v2, to relacji nie mo¿na dodaæ.
+    Algorytm przesuwa wierzcho³ki z segmentu tak, aby nak³adana relacja by³a spe³niona.
+    W ten sposób wszystkie krawêdzie które równiez przesunêliœmy zachowuj¹ swoj¹ d³ugoœæ i nachylenie.
