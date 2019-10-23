@@ -81,41 +81,49 @@ namespace GK_Projekt1
             image = new Bitmap(pictureBox.Width, pictureBox.Height);
             pictureBox.Image = image;
             this.DoubleBuffered = true;
+            Polygon pol = new Polygon(0);
+            polygons.Add(pol);
+            Point[] points = new Point[]
+            {
+                new Point(100, 100),
+                new Point(200, 200),
+                new Point(200, 300),
+                new Point(250, 320),
+                new Point(370, 370),
+                new Point(420, 380),
+                new Point(503, 390),
+                new Point(600, 300),
+                new Point(550, 250),
+                new Point(300, 200),
+                new Point(200, 150),
+            };
+            List<Vertice> vertices = new List<Vertice>();
+            for(int i = 0; i < points.Count(); i++)
+            {
+                vertices.Add(new Vertice(points[i], pol, i));
+            }
+            for(int i = 0; i < vertices.Count; i++)
+            {
+                pol.AddVertice(vertices[i]);
+            }
+            pol.FinishDrawing();
+            E1 = new Edge(vertices[2], vertices[3], pol);
+            chosenEdge = new Edge(vertices[3], vertices[4], pol);
+            AddEqualityRelation();
+            E1 = new Edge(vertices[4], vertices[5], pol);
+            chosenEdge = new Edge(vertices[5], vertices[6], pol);
+            AddPerpendicularRelation();
+            E1 = new Edge(vertices[1], vertices[2], pol);
+            chosenEdge = new Edge(vertices[7], vertices[8], pol);
+            AddEqualityRelation();
+            E1 = new Edge(vertices[10], vertices[0], pol);
+            chosenEdge = new Edge(vertices[8], vertices[9], pol);
+            AddPerpendicularRelation();
+            UpdatePictureBox();
+            
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            if(drawingPolygon && polygons[polygons.Count - 1].VerticeCount == 0)
-            {
-                drawingPolygon = false;
-                addPolygonButton.BackColor = normalButtonColor;
-                currentPolygon = null;
-                return;
-            }
-            if (deletingPoint)
-            {
-                deletingPoint = false;
-                deleteVerticeButton.BackColor = normalButtonColor;
-            }
-            if (deletingPolygon)
-            {
-                deletingPolygon = false;
-                deletePolygonButton.BackColor = normalButtonColor;
-            }
-            if (midPoint)
-            {
-                midPointButton.BackColor = normalButtonColor;
-                midPoint = false;
-            }
-            if (!drawingPolygon)
-            {
-                drawingPolygon = true;
-                addPolygonButton.BackColor = activeButtonColor;
-                polygons.Add(new Polygon(polygons.Count));
-                currentPolygon = polygons[polygons.Count - 1];
-                return;
-            }
-        }
+        
         
         private void MoveVertice(Point p)
         {
@@ -829,8 +837,6 @@ namespace GK_Projekt1
             //UpdatePictureBox();
         }
 
-        
-
         private void RedrawPolygon(Polygon polygon, Brush brush, Pen pen)
         {
             using (Graphics g = pictureBox.CreateGraphics())
@@ -844,20 +850,17 @@ namespace GK_Projekt1
             }
         }
 
-        
 
-        private void midPointButton_Click(object sender, EventArgs e)
+
+
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
         {
             if (drawingPolygon && currentPolygon.VerticeCount == 0)
             {
                 drawingPolygon = false;
                 addPolygonButton.BackColor = normalButtonColor;
                 polygons.RemoveAt(currentPolygon.Index);
-            }
-            else if(midPoint)
-            {
-                midPoint = false;
-                midPointButton.BackColor = normalButtonColor;
                 return;
             }
             else if (deletingPoint)
@@ -869,6 +872,74 @@ namespace GK_Projekt1
             {
                 deletingPolygon = false;
                 deletePolygonButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPointButton.BackColor = normalButtonColor;
+                midPoint = false;
+            }
+            else if (equalRelation)
+            {
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+            }
+            else if (perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+            }
+            else if (deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
+            }
+            else if (drawingPolygon)
+                return;
+            drawingPolygon = true;
+            addPolygonButton.BackColor = activeButtonColor;
+            polygons.Add(new Polygon(polygons.Count));
+            currentPolygon = polygons[polygons.Count - 1];
+            return;
+        }
+
+        private void midPointButton_Click(object sender, EventArgs e)
+        {
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+                return;
+            }
+            else if (deletingPolygon)
+            {
+                deletingPolygon = false;
+                deletePolygonButton.BackColor = normalButtonColor;
+            }
+            else if (equalRelation)
+            {
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+            }
+            else if (perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+            }
+            else if (deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
             }
             else if (drawingPolygon)
                 return;
@@ -891,15 +962,30 @@ namespace GK_Projekt1
                 deleteVerticeButton.BackColor = normalButtonColor;
                 return;
             }
+            else if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+            }
             else if (deletingPolygon)
             {
                 deletingPolygon = false;
                 deletePolygonButton.BackColor = normalButtonColor;
             }
-            else if (midPoint)
+            else if (equalRelation)
             {
-                midPointButton.BackColor = normalButtonColor;
-                midPoint = false;
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+            }
+            else if (perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+            }
+            else if (deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
             }
             else if (drawingPolygon)
                 return;
@@ -932,6 +1018,21 @@ namespace GK_Projekt1
                 deletePolygonButton.BackColor = normalButtonColor;
                 return;
             }
+            else if (equalRelation)
+            {
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+            }
+            else if (perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+            }
+            else if (deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
+            }
             else if (drawingPolygon)
                 return;
             deletePolygonButton.BackColor = activeButtonColor;
@@ -940,22 +1041,140 @@ namespace GK_Projekt1
 
         private void addEqualRButton_Click(object sender, EventArgs e)
         {
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+            }
+            else if (deletingPolygon)
+            {
+                deletingPolygon = false;
+                deletePolygonButton.BackColor = normalButtonColor;
+            }
+            else if(equalRelation)
+            {
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+                return;
+            }
+            else if(perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+            }
+            else if(deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
+            }
+            else if (drawingPolygon)
+                return;
             addEqualRButton.BackColor = activeButtonColor;
             equalRelation = true;
         }
 
         private void addPerpendicularRButton_Click(object sender, EventArgs e)
         {
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+            }
+            else if (deletingPolygon)
+            {
+                deletingPolygon = false;
+                deletePolygonButton.BackColor = normalButtonColor;
+            }
+            else if (equalRelation)
+            {
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+            }
+            else if (perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+                return;
+            }
+            else if (deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
+            }
+            else if (drawingPolygon)
+                return;
             perpenRelation = true;
             addPerpendicularRButton.BackColor = activeButtonColor;
         }
 
-
-
-        private void checkButtons()
+        private void deleteRelationButton_Click(object sender, EventArgs e)
         {
-
+            if (drawingPolygon && currentPolygon.VerticeCount == 0)
+            {
+                drawingPolygon = false;
+                addPolygonButton.BackColor = normalButtonColor;
+                polygons.RemoveAt(currentPolygon.Index);
+            }
+            else if (deletingPoint)
+            {
+                deletingPoint = false;
+                deleteVerticeButton.BackColor = normalButtonColor;
+            }
+            else if (midPoint)
+            {
+                midPoint = false;
+                midPointButton.BackColor = normalButtonColor;
+            }
+            else if (deletingPolygon)
+            {
+                deletingPolygon = false;
+                deletePolygonButton.BackColor = normalButtonColor;
+            }
+            else if (equalRelation)
+            {
+                equalRelation = false;
+                addEqualRButton.BackColor = normalButtonColor;
+            }
+            else if (perpenRelation)
+            {
+                perpenRelation = false;
+                addPerpendicularRButton.BackColor = normalButtonColor;
+            }
+            else if (deletingRelation)
+            {
+                deletingRelation = false;
+                deleteRelationButton.BackColor = normalButtonColor;
+                return;
+            }
+            else if (drawingPolygon)
+                return;
+            deletingRelation = true;
+            deleteRelationButton.BackColor = activeButtonColor;
         }
+        
+
 
         private void pictureBox_Layout(object sender, EventArgs e)
         {
@@ -1039,11 +1258,7 @@ namespace GK_Projekt1
             //pictureBox.Image = bitmap;
         }
 
-        private void deleteRelationButton_Click(object sender, EventArgs e)
-        {
-            deletingRelation = true;
-            deleteRelationButton.BackColor = activeButtonColor;
-        }
+        
     }
     public enum Direction { Forward, Backward };
 }
