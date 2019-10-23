@@ -564,30 +564,6 @@ namespace GK_Projekt1
 
             if (myDrawFlag)
             {
-                /*int dx = Math.Abs(x2 - x1);
-                int sx = x1 < x2 ? 1 : -1;
-                int dy = Math.Abs(y2 - y1);
-                int sy = y1 < y2 ? 1 : -1;
-                int err = (dx > dy ? dx : -dy) / 2, e2;
-                while(true)
-                {
-                    if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
-                        ((Bitmap)pictureBox.Image).SetPixel(x1, y1, pen.Color);
-                    if (x1 == x2 && y1 == y2)
-                        break;
-                    e2 = err;
-                    if (e2 > -dx)
-                    {
-                        err -= dy;
-                        x1 += sx;
-                    }
-                    if (e2 < dy)
-                    {
-                        err += dx;
-                        y1 += sy;
-                    }
-                }
-                pictureBox.Refresh();*/
                 bool steep = Math.Abs(y2 - y1) > Math.Abs(x2 - x1);
                 if (steep)
                 {
@@ -603,14 +579,13 @@ namespace GK_Projekt1
 
                 int dx = x2 - x1;
                 int dy = Math.Abs(y2 - y1);
-
                 int d = 2 * dy - dx;
                 int ystep = (y1 < y2) ? 1 : -1;
-                int y = (int)y1;
+                int y = y1;
+                int incdy = 2 * dy;
+                int incdx = 2 * dx;
 
-                int maxX = x2;
-
-                for (int x = (int)x1; x < maxX; x++)
+                for (int x = x1; x < x2; x++)
                 {
                     if (steep)
                     {
@@ -623,13 +598,14 @@ namespace GK_Projekt1
                             ((Bitmap)pictureBox.Image).SetPixel(x, y, pen.Color);
                     }
 
-                    d -= 2 * dy;
+                    d -= incdy;
                     if (d < 0)
                     {
                         y += ystep;
-                        d += 2 * dx;
+                        d += incdx;
                     }
                 }
+                pictureBox.Refresh();
             }
             else
             {
@@ -646,30 +622,6 @@ namespace GK_Projekt1
         {
             if (myDrawFlag)
             {
-                /*int dx = Math.Abs(x2 - x1);
-                int sx = x1 < x2 ? 1 : -1; //czy x idzie w prawo czy w lewo
-                int dy = Math.Abs(y2 - y1);
-                int sy = y1 < y2 ? 1 : -1;//czy y idzie do gory czy w dol
-                int err = (dx > dy ? dx : -dy) / 2; // dx/2 albo -dy/2 ?
-                int e2;
-                while(true)
-                {
-                    if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
-                        image.SetPixel(x1, y1, pen.Color);
-                    if (x1 == x2 && y1 == y2)
-                        break;
-                    e2 = err;
-                    if (e2 > -dx)
-                    {
-                        err -= dy;
-                        x1 += sx;
-                    }
-                    if (e2 < dy)
-                    {
-                        err += dx;
-                        y1 += sy;
-                    }
-                }*/
                 bool steep = Math.Abs(y2 - y1) > Math.Abs(x2 - x1);
                 if (steep)
                 {
@@ -687,12 +639,11 @@ namespace GK_Projekt1
                 int dy = Math.Abs(y2 - y1);
 
                 int d = 2 * dy - dx;
+                int incdy = 2 * dy;
+                int incdx = 2 * dx;
                 int ystep = (y1 < y2) ? 1 : -1;
-                int y = (int)y1;
-
-                int maxX = x2;
-
-                for (int x = (int)x1; x < maxX; x++)
+                int y = y1;
+                for (int x = x1; x < x2; x++)
                 {
                     if (steep)
                     {
@@ -705,11 +656,11 @@ namespace GK_Projekt1
                             image.SetPixel(x, y, pen.Color);
                     }
 
-                    d -= 2 * dy;
+                    d -= incdy;
                     if (d < 0)
                     {
                         y += ystep;
-                        d += 2 * dx;
+                        d += incdx;
                     }
                 }
             }
