@@ -81,7 +81,7 @@ namespace GK_Projekt1
             image = new Bitmap(pictureBox.Width, pictureBox.Height);
             pictureBox.Image = image;
             this.DoubleBuffered = true;
-            Polygon pol = new Polygon(0);
+            /*Polygon pol = new Polygon(0);
             polygons.Add(pol);
             Point[] points = new Point[]
             {
@@ -119,7 +119,7 @@ namespace GK_Projekt1
             E1 = new Edge(vertices[10], vertices[0], pol);
             chosenEdge = new Edge(vertices[8], vertices[9], pol);
             AddPerpendicularRelation();
-            UpdatePictureBox();
+            UpdatePictureBox();*/
             
         }
 
@@ -564,19 +564,72 @@ namespace GK_Projekt1
 
             if (myDrawFlag)
             {
-                int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
-                int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+                /*int dx = Math.Abs(x2 - x1);
+                int sx = x1 < x2 ? 1 : -1;
+                int dy = Math.Abs(y2 - y1);
+                int sy = y1 < y2 ? 1 : -1;
                 int err = (dx > dy ? dx : -dy) / 2, e2;
-                for (; ; )
+                while(true)
                 {
                     if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
                         ((Bitmap)pictureBox.Image).SetPixel(x1, y1, pen.Color);
-                    if (x1 == x2 && y1 == y2) break;
+                    if (x1 == x2 && y1 == y2)
+                        break;
                     e2 = err;
-                    if (e2 > -dx) { err -= dy; x1 += sx; }
-                    if (e2 < dy) { err += dx; y1 += sy; }
+                    if (e2 > -dx)
+                    {
+                        err -= dy;
+                        x1 += sx;
+                    }
+                    if (e2 < dy)
+                    {
+                        err += dx;
+                        y1 += sy;
+                    }
                 }
-                pictureBox.Refresh();
+                pictureBox.Refresh();*/
+                bool steep = Math.Abs(y2 - y1) > Math.Abs(x2 - x1);
+                if (steep)
+                {
+                    Swap(ref x1, ref y1);
+                    Swap(ref x2, ref y2);
+                }
+
+                if (x1 > x2)
+                {
+                    Swap(ref x1, ref x2);
+                    Swap(ref y1, ref y2);
+                }
+
+                int dx = x2 - x1;
+                int dy = Math.Abs(y2 - y1);
+
+                int d = 2 * dy - dx;
+                int ystep = (y1 < y2) ? 1 : -1;
+                int y = (int)y1;
+
+                int maxX = x2;
+
+                for (int x = (int)x1; x < maxX; x++)
+                {
+                    if (steep)
+                    {
+                        if (y >= 0 && y < pictureBox.Image.Width && x >= 0 && x < pictureBox.Image.Height)
+                            ((Bitmap)pictureBox.Image).SetPixel(y, x, pen.Color);
+                    }
+                    else
+                    {
+                        if (x >= 0 && x < pictureBox.Image.Width && y >= 0 && y < pictureBox.Image.Height)
+                            ((Bitmap)pictureBox.Image).SetPixel(x, y, pen.Color);
+                    }
+
+                    d -= 2 * dy;
+                    if (d < 0)
+                    {
+                        y += ystep;
+                        d += 2 * dx;
+                    }
+                }
             }
             else
             {
@@ -593,17 +646,71 @@ namespace GK_Projekt1
         {
             if (myDrawFlag)
             {
-                int dx = Math.Abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
-                int dy = Math.Abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
-                int err = (dx > dy ? dx : -dy) / 2, e2;
-                for (; ; )
+                /*int dx = Math.Abs(x2 - x1);
+                int sx = x1 < x2 ? 1 : -1; //czy x idzie w prawo czy w lewo
+                int dy = Math.Abs(y2 - y1);
+                int sy = y1 < y2 ? 1 : -1;//czy y idzie do gory czy w dol
+                int err = (dx > dy ? dx : -dy) / 2; // dx/2 albo -dy/2 ?
+                int e2;
+                while(true)
                 {
                     if (x1 >= 0 && x1 < pictureBox.Image.Width && y1 >= 0 && y1 < pictureBox.Image.Height)
                         image.SetPixel(x1, y1, pen.Color);
-                    if (x1 == x2 && y1 == y2) break;
+                    if (x1 == x2 && y1 == y2)
+                        break;
                     e2 = err;
-                    if (e2 > -dx) { err -= dy; x1 += sx; }
-                    if (e2 < dy) { err += dx; y1 += sy; }
+                    if (e2 > -dx)
+                    {
+                        err -= dy;
+                        x1 += sx;
+                    }
+                    if (e2 < dy)
+                    {
+                        err += dx;
+                        y1 += sy;
+                    }
+                }*/
+                bool steep = Math.Abs(y2 - y1) > Math.Abs(x2 - x1);
+                if (steep)
+                {
+                    Swap(ref x1, ref y1);
+                    Swap(ref x2, ref y2);
+                }
+
+                if (x1 > x2)
+                {
+                    Swap(ref x1, ref x2);
+                    Swap(ref y1, ref y2);
+                }
+
+                int dx = x2 - x1;
+                int dy = Math.Abs(y2 - y1);
+
+                int d = 2 * dy - dx;
+                int ystep = (y1 < y2) ? 1 : -1;
+                int y = (int)y1;
+
+                int maxX = x2;
+
+                for (int x = (int)x1; x < maxX; x++)
+                {
+                    if (steep)
+                    {
+                        if (y >= 0 && y < pictureBox.Image.Width && x >= 0 && x < pictureBox.Image.Height)
+                            image.SetPixel(y, x, pen.Color);
+                    }
+                    else
+                    {
+                        if (x >= 0 && x < pictureBox.Image.Width && y >= 0 && y < pictureBox.Image.Height)
+                            image.SetPixel(x, y, pen.Color);
+                    }
+
+                    d -= 2 * dy;
+                    if (d < 0)
+                    {
+                        y += ystep;
+                        d += 2 * dx;
+                    }
                 }
             }
             else
@@ -1258,7 +1365,12 @@ namespace GK_Projekt1
             //pictureBox.Image = bitmap;
         }
 
-        
+        private void Swap(ref int a, ref int b)
+        {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
     }
     public enum Direction { Forward, Backward };
 }
